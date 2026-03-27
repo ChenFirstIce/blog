@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 import { Anime } from '../types';
-import { Star, Tv, Plus, X, ExternalLink, Play, Info } from 'lucide-react';
+import { Star, Tv, ExternalLink, Info } from 'lucide-react';
 
 interface BilibiliAnime {
   title: string;
@@ -23,35 +23,40 @@ export const AnimeList: React.FC = () => {
   const [bilibiliAnime, setBilibiliAnime] = useState<BilibiliAnime[]>([]);
   const [shelfAnime, setShelfAnime] = useState<Anime[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newAnime, setNewAnime] = useState({ name: '', imageUrl: '', score: 8, comment: '' });
+  const [bilibiliLoading, setBilibiliLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'bilibili' | 'shelf'>('bilibili');
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchBilibili = async (page: number) => {
+    setBilibiliLoading(true);
+    try {
+      const response = await fetch(`/api/bilibili/anime?ps=30&pn=${page}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.message || `Server error: ${response.status}`);
+        return;
+      }
+      const result = await response.json();
+      
+      if (result.code === 0 && result.data?.list) {
+        setBilibiliAnime(result.data.list);
+        const total = result.data.total || 0;
+        setTotalPages(Math.ceil(total / 30));
+        setError(null);
+      } else {
+        setError(result.message || "Failed to fetch Bilibili anime list");
+      }
+    } catch (error) {
+      console.error("Error fetching Bilibili anime:", error);
+      setError("Network error or server unavailable");
+    } finally {
+      setBilibiliLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Fetch Bilibili Anime
-    const fetchBilibili = async () => {
-      try {
-        const response = await fetch('/api/bilibili/anime?ps=30');
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          setError(errorData.message || `Server error: ${response.status}`);
-          return;
-        }
-        const result = await response.json();
-        if (result.code === 0 && result.data?.list) {
-          setBilibiliAnime(result.data.list);
-          setError(null);
-        } else {
-          setError(result.message || "Failed to fetch Bilibili anime list");
-        }
-      } catch (error) {
-        console.error("Error fetching Bilibili anime:", error);
-        setError("Network error or server unavailable");
-      }
-    };
-
     // Fetch Shelf Anime (Firebase)
     const q = query(collection(db, 'anime'), orderBy('createdAt', 'desc'));
     const unsubscribeShelf = onSnapshot(q, (snapshot) => {
@@ -60,24 +65,14 @@ export const AnimeList: React.FC = () => {
       setLoading(false);
     });
 
-    fetchBilibili();
-
-    const unsubscribeAuth = auth.onAuthStateChanged(user => {
-      setIsAdmin(user?.email === 'firsticychen@gmail.com');
-    });
-
-    return () => { unsubscribeShelf(); unsubscribeAuth(); };
+    return () => { unsubscribeShelf(); };
   }, []);
 
-  const handleAddAnime = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await addDoc(collection(db, 'anime'), {
-      ...newAnime,
-      createdAt: serverTimestamp()
-    });
-    setShowAddModal(false);
-    setNewAnime({ name: '', imageUrl: '', score: 8, comment: '' });
-  };
+  useEffect(() => {
+    if (activeTab === 'bilibili') {
+      fetchBilibili(currentPage);
+    }
+  }, [currentPage, activeTab]);
 
   if (loading && shelfAnime.length === 0 && bilibiliAnime.length === 0) {
     return <div className="text-center py-20">Loading anime list...</div>;
@@ -109,55 +104,7 @@ export const AnimeList: React.FC = () => {
             </button>
           </div>
         </div>
-        
-        {isAdmin && activeTab === 'shelf' && (
-          <button 
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#ff7675] text-white rounded-full font-bold hover:bg-[#ee5253] transition-all"
-          >
-            <Plus size={18} /> Add Anime
-          </button>
-        )}
       </header>
-
-      {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-3xl p-8 space-y-6 shadow-2xl animate-in zoom-in duration-300">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Add Anime</h2>
-              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 rounded-full"><X size={24} /></button>
-            </div>
-            <form onSubmit={handleAddAnime} className="space-y-4">
-              <input 
-                type="text" placeholder="Anime Name" required
-                value={newAnime.name} onChange={e => setNewAnime({...newAnime, name: e.target.value})}
-                className="w-full p-4 bg-gray-50 rounded-2xl border-none focus:ring-2 focus:ring-red-100"
-              />
-              <input 
-                type="url" placeholder="Image URL" required
-                value={newAnime.imageUrl} onChange={e => setNewAnime({...newAnime, imageUrl: e.target.value})}
-                className="w-full p-4 bg-gray-50 rounded-2xl border-none focus:ring-2 focus:ring-red-100"
-              />
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-500">Score: {newAnime.score}</label>
-                <input 
-                  type="range" min="0" max="10" step="0.5"
-                  value={newAnime.score} onChange={e => setNewAnime({...newAnime, score: parseFloat(e.target.value)})}
-                  className="w-full accent-[#ff7675]"
-                />
-              </div>
-              <textarea 
-                placeholder="Comment" required
-                value={newAnime.comment} onChange={e => setNewAnime({...newAnime, comment: e.target.value})}
-                className="w-full h-32 p-4 bg-gray-50 rounded-2xl border-none focus:ring-2 focus:ring-red-100 resize-none"
-              />
-              <button className="w-full py-4 bg-[#ff7675] text-white rounded-2xl font-bold hover:bg-[#ee5253] transition-all">
-                Add to Shelf
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
 
       {activeTab === 'bilibili' ? (
         <div className="space-y-6">
@@ -168,7 +115,11 @@ export const AnimeList: React.FC = () => {
             </div>
           )}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {bilibiliAnime.length === 0 && !error ? (
+            {bilibiliLoading ? (
+              Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="aspect-[3/4] bg-gray-100 rounded-2xl animate-pulse" />
+              ))
+            ) : bilibiliAnime.length === 0 && !error ? (
               <div className="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                 <Tv className="mx-auto text-gray-300 mb-4" size={48} />
                 <p className="text-gray-400">No Bilibili anime found. Check your UID in settings.</p>
@@ -222,6 +173,61 @@ export const AnimeList: React.FC = () => {
             ))
           )}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4 pt-8">
+              <button
+                disabled={currentPage === 1 || bilibiliLoading}
+                onClick={() => {
+                  setCurrentPage(prev => Math.max(1, prev - 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold disabled:opacity-50 hover:border-[#ff7675] hover:text-[#ff7675] transition-all"
+              >
+                Previous
+              </button>
+              <div className="flex items-center gap-2">
+                {Array.from({ length: Math.min(5, totalPages) }).map((_, i) => {
+                  let pageNum = currentPage;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else {
+                    if (currentPage <= 3) pageNum = i + 1;
+                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                    else pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => {
+                        setCurrentPage(pageNum);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${
+                        currentPage === pageNum 
+                          ? 'bg-[#ff7675] text-white shadow-lg shadow-red-100' 
+                          : 'bg-white border border-gray-200 text-gray-500 hover:border-[#ff7675] hover:text-[#ff7675]'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                disabled={currentPage === totalPages || bilibiliLoading}
+                onClick={() => {
+                  setCurrentPage(prev => Math.min(totalPages, prev + 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold disabled:opacity-50 hover:border-[#ff7675] hover:text-[#ff7675] transition-all"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

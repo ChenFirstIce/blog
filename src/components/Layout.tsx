@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Menu, X, Github, User, BookOpen, Tv, Heart, Lock, LogIn, LogOut, WifiOff, Wifi } from 'lucide-react';
-import { auth, signIn, logOut, db } from '../firebase';
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { Menu, X, Github, User, BookOpen, Tv, Heart, WifiOff } from 'lucide-react';
+import { db } from '../firebase';
 import { doc, getDocFromServer } from 'firebase/firestore';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState<FirebaseUser | null>(null);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const location = useLocation();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
-    
     // Check Firestore connectivity
     const checkConnection = async () => {
       try {
@@ -28,15 +24,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       }
     };
     checkConnection();
-
-    return () => unsubscribe();
   }, []);
 
   const navItems = [
     { name: 'Home', path: '/', icon: User },
     { name: 'Blog', path: '/blog', icon: BookOpen },
     { name: 'Anime', path: '/anime', icon: Tv },
-    { name: 'Diary', path: '/diary', icon: Lock },
     { name: 'Friends', path: '/friends', icon: Heart },
   ];
 
@@ -80,24 +73,6 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                   {item.name}
                 </NavLink>
               ))}
-              
-              {user ? (
-                <button
-                  onClick={logOut}
-                  className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-red-500 transition-colors"
-                >
-                  <LogOut size={16} />
-                  Logout
-                </button>
-              ) : (
-                <button
-                  onClick={signIn}
-                  className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-[#ff7675] transition-colors"
-                >
-                  <LogIn size={16} />
-                  Login
-                </button>
-              )}
             </div>
 
             {/* Mobile menu button */}
@@ -130,25 +105,6 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 {item.name}
               </NavLink>
             ))}
-            <div className="pt-2 border-t border-gray-100">
-              {user ? (
-                <button
-                  onClick={() => { logOut(); setIsMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md"
-                >
-                  <LogOut size={20} />
-                  Logout
-                </button>
-              ) : (
-                <button
-                  onClick={() => { signIn(); setIsMenuOpen(false); }}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md"
-                >
-                  <LogIn size={20} />
-                  Login
-                </button>
-              )}
-            </div>
           </div>
         )}
       </nav>
@@ -165,7 +121,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             © {new Date().getFullYear()} Chen1Ice Blog. Built with Astro-like vibes.
           </p>
           <div className="flex justify-center gap-4 mt-4">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">
+            <a href="https://github.com/ChenFirstIce" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">
               <Github size={20} />
             </a>
           </div>

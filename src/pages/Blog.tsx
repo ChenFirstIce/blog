@@ -1,24 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 import { Post } from '../types';
 import { format } from 'date-fns';
-import { BookOpen, ChevronRight, Plus, X, Tag as TagIcon, LayoutGrid, ListFilter, ArrowLeft } from 'lucide-react';
+import { BookOpen, ChevronRight, X, Tag as TagIcon, ListFilter } from 'lucide-react';
 
 export const Blog: React.FC = () => {
   const { tag } = useParams<{ tag: string }>();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newPost, setNewPost] = useState({ 
-    title: '', 
-    content: '', 
-    excerpt: '', 
-    tags: ''
-  });
 
   useEffect(() => {
     const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
@@ -28,11 +20,7 @@ export const Blog: React.FC = () => {
       setLoading(false);
     });
 
-    const unsubscribeAuth = auth.onAuthStateChanged(user => {
-      setIsAdmin(user?.email === 'firsticychen@gmail.com');
-    });
-
-    return () => { unsubscribe(); unsubscribeAuth(); };
+    return () => { unsubscribe(); };
   }, []);
 
   const allTags = useMemo(() => {
@@ -53,28 +41,6 @@ export const Blog: React.FC = () => {
     return result;
   }, [posts, tag]);
 
-  const handleAddPost = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!auth.currentUser) return;
-    
-    const tagsArray = newPost.tags
-      .split(',')
-      .map(tag => tag.trim())
-      .filter(tag => tag !== '');
-
-    await addDoc(collection(db, 'posts'), {
-      title: newPost.title,
-      content: newPost.content,
-      excerpt: newPost.excerpt,
-      tags: tagsArray,
-      authorId: auth.currentUser.uid,
-      createdAt: serverTimestamp()
-    });
-    
-    setShowAddModal(false);
-    setNewPost({ title: '', content: '', excerpt: '', tags: '' });
-  };
-
   if (loading) return <div className="text-center py-20">Loading posts...</div>;
 
   return (
@@ -84,14 +50,6 @@ export const Blog: React.FC = () => {
           <h1 className="text-4xl font-bold">Blog</h1>
           <p className="text-gray-500">Sharing my learning journey and random thoughts.</p>
         </div>
-        {isAdmin && (
-          <button 
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-[#ff7675] text-white rounded-full font-bold hover:bg-[#ee5253] shadow-lg shadow-red-100 transition-all active:scale-95"
-          >
-            <Plus size={20} /> New Post
-          </button>
-        )}
       </header>
 
       <div className="flex flex-wrap items-center gap-4">
@@ -224,54 +182,6 @@ export const Blog: React.FC = () => {
           </div>
         </aside>
       </div>
-
-      {showAddModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-          <div className="bg-white w-full max-w-2xl rounded-[40px] p-10 space-y-8 shadow-2xl animate-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold">Create New Post</h2>
-              <button onClick={() => setShowAddModal(false)} className="p-3 hover:bg-gray-100 rounded-full transition-colors"><X size={28} /></button>
-            </div>
-            <form onSubmit={handleAddPost} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-2">Title</label>
-                <input 
-                  type="text" placeholder="Enter post title..." required
-                  value={newPost.title} onChange={e => setNewPost({...newPost, title: e.target.value})}
-                  className="w-full p-5 bg-gray-50 rounded-[24px] border-none focus:ring-2 focus:ring-red-100 text-lg font-medium"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-2">Excerpt</label>
-                <input 
-                  type="text" placeholder="Short summary of the post..." required
-                  value={newPost.excerpt} onChange={e => setNewPost({...newPost, excerpt: e.target.value})}
-                  className="w-full p-5 bg-gray-50 rounded-[24px] border-none focus:ring-2 focus:ring-red-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-2">Tags (Comma separated)</label>
-                <input 
-                  type="text" placeholder="tag1, tag2, tag3"
-                  value={newPost.tags} onChange={e => setNewPost({...newPost, tags: e.target.value})}
-                  className="w-full p-5 bg-gray-50 rounded-[24px] border-none focus:ring-2 focus:ring-red-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-2">Content (Markdown)</label>
-                <textarea 
-                  placeholder="Write your thoughts here..." required
-                  value={newPost.content} onChange={e => setNewPost({...newPost, content: e.target.value})}
-                  className="w-full h-80 p-6 bg-gray-50 rounded-[32px] border-none focus:ring-2 focus:ring-red-100 resize-none font-mono text-sm leading-relaxed"
-                />
-              </div>
-              <button className="w-full py-5 bg-[#ff7675] text-white rounded-[24px] font-bold text-lg hover:bg-[#ee5253] shadow-xl shadow-red-100 transition-all active:scale-[0.98]">
-                Publish Post
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

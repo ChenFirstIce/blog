@@ -1,18 +1,15 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, getDocFromServer } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { initializeFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Reverting to standard getFirestore as per instructions
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
-
-export const googleProvider = new GoogleAuthProvider();
-
-export const signIn = () => signInWithPopup(auth, googleProvider);
-export const logOut = () => signOut(auth);
+// Use initializeFirestore with long polling to avoid potential proxy/websocket issues
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+}, firebaseConfig.firestoreDatabaseId);
 
 // Error handler
 export enum OperationType {

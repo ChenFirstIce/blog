@@ -77,14 +77,25 @@ export const Home: React.FC = () => {
             <Calendar className="text-[#ff7675]" />
             GitHub Contributions
           </h2>
-          <span className="text-sm text-gray-400 font-mono">@firsticychen</span>
+          <a 
+            href="https://github.com/ChenFirstIce" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm text-gray-400 font-mono hover:text-[#ff7675] transition-colors"
+          >
+            @ChenFirstIce
+          </a>
         </div>
         <div className="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm overflow-x-auto">
+          {/* Original Chart with fallback check */}
           <img 
-            src="https://ghchart.rshah.org/ff7675/firsticychen" 
-            alt="GitHub Contributions" 
+            src="https://ghchart.rshah.org/ff7675/ChenFirstIce" 
+            alt="GitHub Contributions Grid" 
             className="w-full min-w-[700px]"
             referrerPolicy="no-referrer"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
           />
         </div>
       </section>

@@ -1,28 +1,22 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 import { Post } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { Mindmap } from '../components/Mindmap';
 import { format } from 'date-fns';
-import { ArrowLeft, Share2, Layout as LayoutIcon, FileText, Columns, Save, Check, Bold, Italic, List, Code } from 'lucide-react';
+import { ArrowLeft, Share2, Layout as LayoutIcon, FileText, Columns } from 'lucide-react';
 
 export const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'markdown' | 'mindmap' | 'split'>('markdown');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editableContent, setEditableContent] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
   const [activeId, setActiveId] = useState<string>('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const headings = useMemo(() => {
-    const content = isEditing ? editableContent : post?.content;
+    const content = post?.content;
     if (!content) return [];
     
     const headingRegex = /^(#{1,6})\s+(.*)$/gm;
@@ -35,7 +29,7 @@ export const PostDetail: React.FC = () => {
       matches.push({ level, text, id });
     }
     return matches;
-  }, [post?.content, editableContent, isEditing]);
+  }, [post?.content]);
 
   const getText = (node: any): string => {
     if (typeof node === 'string') return node;
@@ -64,7 +58,7 @@ export const PostDetail: React.FC = () => {
   };
 
   useEffect(() => {
-    if (viewMode !== 'markdown' || isEditing || headings.length === 0) return;
+    if (viewMode !== 'markdown' || headings.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -83,7 +77,7 @@ export const PostDetail: React.FC = () => {
     });
 
     return () => observer.disconnect();
-  }, [headings, viewMode, isEditing]);
+  }, [headings, viewMode]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -93,94 +87,11 @@ export const PostDetail: React.FC = () => {
       if (docSnap.exists()) {
         const data = { id: docSnap.id, ...docSnap.data() } as Post;
         setPost(data);
-        setEditableContent(data.content);
       }
       setLoading(false);
     };
     fetchPost();
-
-    const unsubscribeAuth = auth.onAuthStateChanged(user => {
-      setIsAdmin(user?.email === 'firsticychen@gmail.com');
-    });
-
-    return () => unsubscribeAuth();
   }, [id]);
-
-  const handleSave = async () => {
-    if (!id || !post) return;
-    setIsSaving(true);
-    try {
-      const docRef = doc(db, 'posts', id);
-      await updateDoc(docRef, {
-        content: editableContent
-      });
-      setPost({ ...post, content: editableContent });
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 2000);
-    } catch (error) {
-      console.error("Error updating post:", error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const insertMarkdown = (prefix: string, suffix: string = '') => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const before = text.substring(0, start);
-    const selection = text.substring(start, end);
-    const after = text.substring(end);
-
-    const newText = before + prefix + selection + suffix + after;
-    setEditableContent(newText);
-
-    // Reset focus and selection
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(
-        start + prefix.length,
-        end + prefix.length
-      );
-    }, 0);
-  };
-
-  const EditorToolbar = () => (
-    <div className="flex items-center gap-1 px-3 py-1.5 bg-gray-50 border-b border-gray-100">
-      <button
-        onClick={() => insertMarkdown('**', '**')}
-        className="p-1.5 hover:bg-white hover:text-[#ff7675] rounded-md transition-all text-gray-500"
-        title="Bold"
-      >
-        <Bold size={16} />
-      </button>
-      <button
-        onClick={() => insertMarkdown('*', '*')}
-        className="p-1.5 hover:bg-white hover:text-[#ff7675] rounded-md transition-all text-gray-500"
-        title="Italic"
-      >
-        <Italic size={16} />
-      </button>
-      <div className="w-px h-4 bg-gray-200 mx-1"></div>
-      <button
-        onClick={() => insertMarkdown('\n- ')}
-        className="p-1.5 hover:bg-white hover:text-[#ff7675] rounded-md transition-all text-gray-500"
-        title="List"
-      >
-        <List size={16} />
-      </button>
-      <button
-        onClick={() => insertMarkdown('```\n', '\n```')}
-        className="p-1.5 hover:bg-white hover:text-[#ff7675] rounded-md transition-all text-gray-500"
-        title="Code Block"
-      >
-        <Code size={16} />
-      </button>
-    </div>
-  );
 
   if (loading) return <div className="text-center py-20">Loading post...</div>;
   if (!post) return <div className="text-center py-20">Post not found.</div>;
@@ -191,17 +102,6 @@ export const PostDetail: React.FC = () => {
         <Link to="/blog" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#ff7675] transition-colors">
           <ArrowLeft size={16} /> Back to Blog
         </Link>
-        {isAdmin && !isEditing && (
-          <button
-            onClick={() => {
-              setEditableContent(post.content);
-              setIsEditing(true);
-            }}
-            className="px-4 py-1.5 rounded-full text-sm font-bold bg-[#ff7675] text-white hover:bg-[#ee5253] transition-all"
-          >
-            Edit Post
-          </button>
-        )}
       </div>
 
       <header className="space-y-4">
@@ -252,54 +152,20 @@ export const PostDetail: React.FC = () => {
             <Columns size={16} /> Split View
           </button>
         </div>
-
-        {isEditing && (
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                setEditableContent(post.content);
-                setIsEditing(false);
-              }}
-              className="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="flex items-center gap-2 px-6 py-2 bg-[#ff7675] text-white rounded-xl font-bold hover:bg-[#ee5253] transition-all disabled:opacity-50"
-            >
-              {isSaving ? 'Saving...' : saveSuccess ? <><Check size={18} /> Saved</> : <><Save size={18} /> Save Changes</>}
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="flex flex-col lg:flex-row gap-12 items-start">
         <div className={`flex-1 min-w-0 w-full bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-500 ${viewMode === 'split' ? 'h-[700px]' : ''}`}>
           {viewMode === 'markdown' ? (
             <div className="p-8 md:p-12">
-              {isEditing ? (
-                <div className="flex flex-col border-2 border-[#ff7675]/20 rounded-2xl overflow-hidden bg-white shadow-xl">
-                  <EditorToolbar />
-                  <textarea
-                    ref={textareaRef}
-                    value={editableContent}
-                    onChange={(e) => setEditableContent(e.target.value)}
-                    className="w-full h-[500px] p-6 focus:outline-none font-mono text-sm resize-none"
-                    placeholder="Write your markdown here..."
-                  />
-                </div>
-              ) : (
-                <div className="markdown-body prose prose-red max-w-none">
-                  <ReactMarkdown components={MarkdownComponents}>{post.content}</ReactMarkdown>
-                </div>
-              )}
+              <div className="markdown-body prose prose-red max-w-none">
+                <ReactMarkdown components={MarkdownComponents}>{post.content}</ReactMarkdown>
+              </div>
             </div>
           ) : viewMode === 'mindmap' ? (
             <div className="p-8 space-y-4 h-[600px]">
               <p className="text-sm text-gray-400 italic">Visualizing the structure of this post...</p>
-              <Mindmap markdown={isEditing ? editableContent : post.content} className="!h-[500px]" />
+              <Mindmap markdown={post.content} className="!h-[500px]" />
             </div>
           ) : (
             <div className="flex h-full divide-x divide-gray-100">
@@ -308,22 +174,11 @@ export const PostDetail: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <FileText size={14} /> Markdown
                   </div>
-                  {isEditing && (
-                    <div className="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
-                      <button onClick={() => insertMarkdown('**', '**')} className="p-1 hover:text-[#ff7675] transition-colors" title="Bold"><Bold size={14} /></button>
-                      <button onClick={() => insertMarkdown('*', '*')} className="p-1 hover:text-[#ff7675] transition-colors" title="Italic"><Italic size={14} /></button>
-                      <button onClick={() => insertMarkdown('\n- ')} className="p-1 hover:text-[#ff7675] transition-colors" title="List"><List size={14} /></button>
-                      <button onClick={() => insertMarkdown('```\n', '\n```')} className="p-1 hover:text-[#ff7675] transition-colors" title="Code Block"><Code size={14} /></button>
-                    </div>
-                  )}
                 </div>
                 <textarea
-                  ref={textareaRef}
-                  value={editableContent}
-                  onChange={(e) => setEditableContent(e.target.value)}
-                  readOnly={!isEditing}
-                  className={`flex-1 w-full p-4 bg-gray-50 rounded-2xl border-none focus:ring-2 focus:ring-red-100 font-mono text-sm resize-none ${!isEditing ? 'cursor-not-allowed opacity-80' : ''}`}
-                  placeholder="Content..."
+                  readOnly
+                  value={post.content}
+                  className="flex-1 w-full p-4 bg-gray-50 rounded-2xl border-none font-mono text-sm resize-none cursor-not-allowed opacity-80"
                 />
               </div>
               <div className="flex-1 flex flex-col p-6 space-y-4 overflow-hidden">
@@ -331,14 +186,14 @@ export const PostDetail: React.FC = () => {
                   <LayoutIcon size={14} /> Real-time Mindmap
                 </div>
                 <div className="flex-1 relative rounded-2xl overflow-hidden border border-gray-50">
-                  <Mindmap markdown={editableContent} className="!h-full border-none" />
+                  <Mindmap markdown={post.content} className="!h-full border-none" />
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        {viewMode === 'markdown' && !isEditing && headings.length > 0 && (
+        {viewMode === 'markdown' && headings.length > 0 && (
           <aside className="hidden lg:block w-64 shrink-0 sticky top-24">
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
