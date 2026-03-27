@@ -39,23 +39,6 @@ export const Home: React.FC = () => {
             A passionate computer science student exploring the intersection of code and creativity. 
             I love building things that make a difference, watching seasonal anime, and documenting my journey.
           </p>
-          <div className="flex gap-4">
-            <a 
-              href="https://github.com" 
-              target="_blank" 
-              className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-2xl hover:bg-gray-800 transition-all shadow-lg hover:shadow-gray-200"
-            >
-              <Github size={20} />
-              GitHub Profile
-            </a>
-            <Link 
-              to="/blog" 
-              className="flex items-center gap-2 px-6 py-3 bg-white text-gray-900 border border-gray-200 rounded-2xl hover:border-[#ff7675] hover:text-[#ff7675] transition-all"
-            >
-              Read Blog
-              <ArrowRight size={20} />
-            </Link>
-          </div>
         </div>
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-[#ff7675] to-[#fab1a0] rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>

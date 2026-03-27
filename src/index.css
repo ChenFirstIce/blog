@@ -6,33 +6,69 @@
 
 @layer base {
   .markdown-body {
-    @apply leading-relaxed text-gray-700;
+    @apply leading-relaxed text-gray-700 font-sans;
   }
   .markdown-body h1 {
-    @apply text-3xl font-bold mb-6 mt-10;
+    @apply text-4xl font-bold mb-8 mt-12 text-gray-900 tracking-tight;
   }
   .markdown-body h2 {
-    @apply text-2xl font-bold mb-4 mt-8;
+    @apply text-2xl font-bold mb-6 mt-10 text-gray-800 tracking-tight border-b border-gray-100 pb-2;
   }
   .markdown-body h3 {
-    @apply text-xl font-bold mb-3 mt-6;
+    @apply text-xl font-bold mb-4 mt-8 text-gray-800;
+  }
+  .markdown-body h4 {
+    @apply text-lg font-bold mb-3 mt-6 text-gray-800;
   }
   .markdown-body p {
-    @apply mb-4;
+    @apply mb-6 text-lg text-gray-600 leading-relaxed;
   }
   .markdown-body ul {
-    @apply list-disc list-inside mb-4 space-y-1;
+    @apply list-disc list-outside mb-6 ml-6 space-y-2 text-gray-600;
   }
   .markdown-body ol {
-    @apply list-decimal list-inside mb-4 space-y-1;
+    @apply list-decimal list-outside mb-6 ml-6 space-y-2 text-gray-600;
+  }
+  .markdown-body li {
+    @apply pl-1;
   }
   .markdown-body blockquote {
-    @apply border-l-4 border-red-200 pl-4 italic text-gray-500 my-6;
+    @apply border-l-4 border-[#ff7675] pl-6 py-1 italic text-gray-500 my-8 bg-red-50/30 rounded-r-2xl;
   }
-  .markdown-body code {
-    @apply bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-red-500;
+  .markdown-body code:not(pre code) {
+    @apply bg-red-50 px-1.5 py-0.5 rounded-md text-sm font-mono text-[#ff7675] font-medium;
   }
   .markdown-body pre {
-    @apply bg-gray-900 text-gray-100 p-4 rounded-2xl overflow-x-auto my-6 text-sm;
+    @apply bg-[#1a1b26] text-gray-100 p-6 rounded-2xl overflow-x-auto my-8 text-sm font-mono shadow-xl;
+  }
+  .markdown-body pre code {
+    @apply bg-transparent p-0 text-inherit font-mono leading-relaxed;
+  }
+  .markdown-body img {
+    @apply rounded-3xl my-10 shadow-lg mx-auto max-w-full;
+  }
+  .markdown-body hr {
+    @apply my-12 border-gray-100;
+  }
+  .markdown-body table {
+    @apply w-full border-collapse m-0;
+  }
+  .markdown-body th {
+    @apply bg-gray-50/80 px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100;
+  }
+  .markdown-body td {
+    @apply px-6 py-4 text-sm text-gray-600 border-b border-gray-50;
+  }
+  .markdown-body tr:last-child td {
+    @apply border-b-0;
+  }
+  .markdown-body tr:nth-child(even) td {
+    @apply bg-gray-50/30;
+  }
+  .markdown-body tr:hover td {
+    @apply bg-red-50/30 text-gray-900;
+  }
+  .markdown-body img {
+    @apply m-0;
   }
 }
