@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "Post": {
+      "title": "Blog Post",
+      "description": "A learning note or essay.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Post title" },
+        "content": { "type": "string", "description": "Markdown content" },
+        "excerpt": { "type": "string", "description": "Short summary" },
+        "category": { "type": "string", "enum": ["Learning", "Essay", "Project", "Notes", "Tutorial"], "description": "Post category" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "Post tags" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "authorId": { "type": "string", "description": "UID of the author" }
+      },
+      "required": ["title", "content", "category", "createdAt", "authorId"]
+    },
+    "Anime": {
+      "title": "Anime Entry",
+      "description": "An anime watched by the user.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Anime name" },
+        "imageUrl": { "type": "string", "description": "Cover image URL" },
+        "score": { "type": "number", "description": "Rating (0-10)" },
+        "comment": { "type": "string", "description": "Personal review" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "imageUrl", "score", "comment", "createdAt"]
+    },
+    "Diary": {
+      "title": "Private Diary",
+      "description": "A private entry only visible to the owner.",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string", "description": "Diary content" },
+        "isPrivate": { "type": "boolean", "description": "Whether it's private" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "authorId": { "type": "string" }
+      },
+      "required": ["content", "isPrivate", "createdAt", "authorId"]
+    },
+    "Friend": {
+      "title": "Friend Link",
+      "description": "A link to a friend's website.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "description": { "type": "string" },
+        "avatar": { "type": "string" }
+      },
+      "required": ["name", "url", "description"]
+    }
+  },
+  "firestore": {
+    "/posts/{postId}": { "schema": "Post", "description": "Public blog posts" },
+    "/anime/{animeId}": { "schema": "Anime", "description": "Public anime list" },
+    "/diaries/{diaryId}": { "schema": "Diary", "description": "Private diaries" },
+    "/friends/{friendId}": { "schema": "Friend", "description": "Friend links" }
+  }
+}
