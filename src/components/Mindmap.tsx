@@ -18,20 +18,24 @@ export const Mindmap: React.FC<MindmapProps> = ({ markdown, className }) => {
 
   useEffect(() => {
     if (svgRef.current) {
-      const { root } = transformer.transform(markdown);
-      if (!mmRef.current) {
-        mmRef.current = Markmap.create(svgRef.current, {
-          autoFit: true,
-        }, root);
-        
-        if (toolbarRef.current) {
-          const toolbar = new Toolbar();
-          toolbar.attach(mmRef.current);
-          toolbarRef.current.append(toolbar.render());
+      try {
+        const { root } = transformer.transform(markdown);
+        if (!mmRef.current) {
+          mmRef.current = Markmap.create(svgRef.current, {
+            autoFit: true,
+          }, root);
+          
+          if (toolbarRef.current) {
+            const toolbar = new Toolbar();
+            toolbar.attach(mmRef.current);
+            toolbarRef.current.append(toolbar.render());
+          }
+        } else {
+          mmRef.current.setData(root);
+          mmRef.current.fit();
         }
-      } else {
-        mmRef.current.setData(root);
-        mmRef.current.fit();
+      } catch (error) {
+        console.error("Error rendering mindmap:", error);
       }
     }
   }, [markdown]);
