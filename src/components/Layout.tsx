@@ -50,7 +50,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               <div className="w-8 h-8 bg-[#ff7675] rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:rotate-12 transition-transform">
                 C
               </div>
-              <span className="font-bold text-xl tracking-tight">Citrus</span>
+              <span className="font-bold text-xl tracking-tight">Chen1Ice</span>
             </Link>
 
             {/* Connection Status Indicator */}
@@ -162,7 +162,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       <footer className="bg-white border-t border-gray-100 py-12 mt-auto">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} Citrus Blog. Built with Astro-like vibes.
+            © {new Date().getFullYear()} Chen1Ice Blog. Built with Astro-like vibes.
           </p>
           <div className="flex justify-center gap-4 mt-4">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-600 transition-colors">

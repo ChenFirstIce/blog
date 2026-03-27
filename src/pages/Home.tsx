@@ -31,7 +31,7 @@ export const Home: React.FC = () => {
         <div className="flex-1 space-y-6">
           <div className="space-y-2">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-              Hi, I'm <span className="text-[#ff7675]">Citrus</span> 👋
+              Hi, I'm <span className="text-[#ff7675]">Chen1Ice</span> 👋
             </h1>
             <p className="text-xl text-gray-400 font-medium">CS Student & Anime Lover</p>
           </div>
@@ -61,7 +61,7 @@ export const Home: React.FC = () => {
           <div className="absolute -inset-1 bg-gradient-to-r from-[#ff7675] to-[#fab1a0] rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
           <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-3xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
             <img 
-              src="https://picsum.photos/seed/citrus-avatar/400/400" 
+              src="https://picsum.photos/seed/chen1ice-avatar/400/400" 
               alt="Avatar" 
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
@@ -117,9 +117,6 @@ export const Home: React.FC = () => {
               >
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#ff7675] bg-red-50 px-2 py-0.5 rounded">
-                        {post.category}
-                      </span>
                       <div className="flex gap-2">
                         {post.tags?.slice(0, 2).map(tag => (
                           <span key={tag} className="text-[10px] text-gray-300 font-bold">#{tag}</span>

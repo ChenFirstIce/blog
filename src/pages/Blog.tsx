@@ -6,8 +6,6 @@ import { Post } from '../types';
 import { format } from 'date-fns';
 import { BookOpen, ChevronRight, Plus, X, Tag as TagIcon, LayoutGrid, ListFilter, ArrowLeft } from 'lucide-react';
 
-const CATEGORIES = ['All', 'Learning', 'Essay', 'Project', 'Notes', 'Tutorial'] as const;
-
 export const Blog: React.FC = () => {
   const { tag } = useParams<{ tag: string }>();
   const navigate = useNavigate();
@@ -15,12 +13,10 @@ export const Blog: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [newPost, setNewPost] = useState({ 
     title: '', 
     content: '', 
     excerpt: '', 
-    category: 'Learning' as Post['category'],
     tags: ''
   });
 
@@ -51,14 +47,11 @@ export const Blog: React.FC = () => {
 
   const filteredPosts = useMemo(() => {
     let result = posts;
-    if (selectedCategory !== 'All') {
-      result = result.filter(post => post.category === selectedCategory);
-    }
     if (tag) {
       result = result.filter(post => post.tags?.includes(tag));
     }
     return result;
-  }, [posts, selectedCategory, tag]);
+  }, [posts, tag]);
 
   const handleAddPost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,14 +66,13 @@ export const Blog: React.FC = () => {
       title: newPost.title,
       content: newPost.content,
       excerpt: newPost.excerpt,
-      category: newPost.category,
       tags: tagsArray,
       authorId: auth.currentUser.uid,
       createdAt: serverTimestamp()
     });
     
     setShowAddModal(false);
-    setNewPost({ title: '', content: '', excerpt: '', category: 'Learning', tags: '' });
+    setNewPost({ title: '', content: '', excerpt: '', tags: '' });
   };
 
   if (loading) return <div className="text-center py-20">Loading posts...</div>;
@@ -103,26 +95,6 @@ export const Blog: React.FC = () => {
       </header>
 
       <div className="flex flex-wrap items-center gap-4">
-        {/* Category Filter */}
-        <div className="flex flex-wrap items-center gap-3 p-1 bg-gray-50 rounded-2xl w-fit">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => {
-                setSelectedCategory(cat);
-                if (tag) navigate('/blog');
-              }}
-              className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                selectedCategory === cat 
-                  ? 'bg-white text-[#ff7675] shadow-sm' 
-                  : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
         {/* Active Tag Indicator */}
         {tag && (
           <div className="flex items-center gap-2 px-4 py-2 bg-red-50 text-[#ff7675] rounded-xl text-sm font-bold animate-in fade-in zoom-in duration-300">
@@ -144,7 +116,7 @@ export const Blog: React.FC = () => {
           {filteredPosts.length === 0 ? (
             <div className="text-center py-24 bg-white rounded-[40px] border border-dashed border-gray-200">
               <BookOpen className="mx-auto text-gray-200 mb-6" size={64} />
-              <p className="text-gray-400 font-medium">No posts found {tag ? `with tag #${tag}` : 'in this category'}.</p>
+              <p className="text-gray-400 font-medium">No posts found {tag ? `with tag #${tag}` : ''}.</p>
               {tag && (
                 <button 
                   onClick={() => navigate('/blog')}
@@ -163,9 +135,6 @@ export const Blog: React.FC = () => {
               >
                 <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
                   <div className="flex items-center gap-3">
-                    <span className="px-4 py-1.5 bg-red-50 text-[#ff7675] text-[10px] font-black uppercase tracking-widest rounded-full">
-                      {post.category}
-                    </span>
                     <div className="flex gap-2">
                       {post.tags?.slice(0, 3).map(t => (
                         <span key={t} className={`text-[10px] font-bold ${t === tag ? 'text-[#ff7675]' : 'text-gray-400'}`}>#{t}</span>
@@ -192,34 +161,6 @@ export const Blog: React.FC = () => {
 
         {/* Sidebar */}
         <aside className="w-full lg:w-80 space-y-10">
-          <div className="p-8 bg-white rounded-[40px] border border-gray-100 shadow-sm space-y-6">
-            <h3 className="text-xl font-bold flex items-center gap-3">
-              <LayoutGrid size={20} className="text-[#ff7675]" />
-              Categories
-            </h3>
-            <div className="space-y-2">
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    if (tag) navigate('/blog');
-                  }}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
-                    selectedCategory === cat 
-                      ? 'bg-red-50 text-[#ff7675]' 
-                      : 'text-gray-500 hover:bg-gray-50'
-                  }`}
-                >
-                  {cat}
-                  <span className="text-[10px] opacity-50">
-                    {cat === 'All' ? posts.length : posts.filter(p => p.category === cat).length}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="p-8 bg-white rounded-[40px] border border-gray-100 shadow-sm space-y-6">
             <h3 className="text-xl font-bold flex items-center gap-3">
               <TagIcon size={20} className="text-[#ff7675]" />
@@ -308,26 +249,13 @@ export const Blog: React.FC = () => {
                   className="w-full p-5 bg-gray-50 rounded-[24px] border-none focus:ring-2 focus:ring-red-100"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-2">Category</label>
-                  <select 
-                    value={newPost.category} onChange={e => setNewPost({...newPost, category: e.target.value as any})}
-                    className="w-full p-5 bg-gray-50 rounded-[24px] border-none focus:ring-2 focus:ring-red-100 font-bold text-gray-600"
-                  >
-                    {CATEGORIES.filter(c => c !== 'All').map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-2">Tags (Comma separated)</label>
-                  <input 
-                    type="text" placeholder="tag1, tag2, tag3"
-                    value={newPost.tags} onChange={e => setNewPost({...newPost, tags: e.target.value})}
-                    className="w-full p-5 bg-gray-50 rounded-[24px] border-none focus:ring-2 focus:ring-red-100"
-                  />
-                </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-2">Tags (Comma separated)</label>
+                <input 
+                  type="text" placeholder="tag1, tag2, tag3"
+                  value={newPost.tags} onChange={e => setNewPost({...newPost, tags: e.target.value})}
+                  className="w-full p-5 bg-gray-50 rounded-[24px] border-none focus:ring-2 focus:ring-red-100"
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-2">Content (Markdown)</label>

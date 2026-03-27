@@ -3,7 +3,6 @@ export interface Post {
   title: string;
   content: string;
   excerpt: string;
-  category: 'Learning' | 'Essay' | 'Project' | 'Notes' | 'Tutorial';
   tags: string[];
   createdAt: any;
   authorId: string;
