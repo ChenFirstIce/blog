@@ -1,130 +1,80 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase';
-import { Post } from '../types';
-import { format } from 'date-fns';
-import { Github, GraduationCap, Trophy, Calendar, BookOpen, ChevronRight, ArrowRight } from 'lucide-react';
+import { ArrowRight, BookOpen, ChevronRight, GraduationCap, Trophy } from 'lucide-react';
+import { education, honors, siteProfile } from '../content/site';
+import { getRecentPosts } from '../lib/posts';
 
 export const Home: React.FC = () => {
-  const [latestPosts, setLatestPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const q = query(
-      collection(db, 'posts'),
-      orderBy('createdAt', 'desc'),
-      limit(3)
-    );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
-      setLatestPosts(data);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+  const latestPosts = getRecentPosts();
 
   return (
-    <div className="space-y-24 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* 1. Hero Section (Self Introduction) */}
+    <div className="space-y-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <section className="flex flex-col md:flex-row items-center gap-10 pt-8">
         <div className="flex-1 space-y-6">
           <div className="space-y-2">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-              Hi, I'm <span className="text-[#ff7675]">Chen1Ice</span> 👋
+              Hi, I'm <span className="text-[#ff7675]">{siteProfile.name}</span>
             </h1>
-            <p className="text-xl text-gray-400 font-medium">CS Student & Anime Lover</p>
+            <p className="text-xl text-gray-400 font-medium">{siteProfile.role}</p>
           </div>
           <p className="text-lg text-gray-600 leading-relaxed max-w-2xl">
-            A passionate computer science student exploring the intersection of code and creativity. 
-            I love building things that make a difference, watching seasonal anime, and documenting my journey.
+            {siteProfile.intro}
           </p>
         </div>
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-[#ff7675] to-[#fab1a0] rounded-3xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
           <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-3xl overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
-            <img 
-              src="https://picsum.photos/seed/chen1ice-avatar/400/400" 
-              alt="Avatar" 
+            <img
+              src={siteProfile.avatar}
+              alt={`${siteProfile.name} avatar`}
               className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
             />
           </div>
         </div>
       </section>
 
-      {/* 2. GitHub Contribution Wall */}
       <section className="space-y-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Calendar className="text-[#ff7675]" />
-            GitHub Contributions
-          </h2>
-          <a 
-            href="https://github.com/ChenFirstIce" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-sm text-gray-400 font-mono hover:text-[#ff7675] transition-colors"
-          >
-            @ChenFirstIce
-          </a>
-        </div>
-        <div className="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm overflow-x-auto">
-          {/* Original Chart with fallback check */}
-          <img 
-            src="https://ghchart.rshah.org/ff7675/ChenFirstIce" 
-            alt="GitHub Contributions Grid" 
-            className="w-full min-w-[700px]"
-            referrerPolicy="no-referrer"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
-        </div>
-      </section>
-
-      {/* 3. Latest Posts (Top 3) */}
-      <section className="space-y-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <BookOpen className="text-[#ff7675]" />
             Latest Posts
           </h2>
-          <Link to="/blog" className="text-sm font-bold text-[#ff7675] hover:underline flex items-center gap-1">
+          <Link to="/blog" className="text-sm font-bold text-[#ff7675] hover:underline flex items-center gap-1 shrink-0">
             View All <ChevronRight size={16} />
           </Link>
         </div>
-        
+
         <div className="grid gap-6">
-          {loading ? (
-            <div className="py-10 text-center text-gray-400">Loading latest posts...</div>
-          ) : latestPosts.length === 0 ? (
+          {latestPosts.length === 0 ? (
             <div className="p-12 text-center bg-white rounded-3xl border border-dashed border-gray-200 text-gray-400">
               No posts published yet.
             </div>
           ) : (
             latestPosts.map((post) => (
-              <Link 
-                key={post.id} 
-                to={`/blog/${post.id}`}
-                className="group flex flex-col md:flex-row md:items-center justify-between p-6 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1"
+              <Link
+                key={post.slug}
+                to={`/blog/${post.slug}`}
+                className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1"
               >
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <div className="flex gap-2">
-                        {post.tags?.slice(0, 2).map(tag => (
-                          <span key={tag} className="text-[10px] text-gray-300 font-bold">#{tag}</span>
-                        ))}
-                      </div>
-                      <span className="text-xs text-gray-400">
-                        {post.createdAt?.seconds ? format(new Date(post.createdAt.seconds * 1000), 'MMM d, yyyy') : 'Recently'}
-                      </span>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.slice(0, 2).map((tag) => (
+                        <span key={tag.slug} className="text-xs text-gray-500 font-semibold">
+                          #{tag.label}
+                        </span>
+                      ))}
                     </div>
-                    <h3 className="text-xl font-bold group-hover:text-[#ff7675] transition-colors">
-                      {post.title}
-                    </h3>
+                    <span className="text-xs text-gray-400">{post.date}</span>
                   </div>
-                <div className="mt-4 md:mt-0 opacity-0 group-hover:opacity-100 transition-opacity text-[#ff7675]">
+                  <h3 className="text-xl font-bold group-hover:text-[#ff7675] transition-colors">
+                    {post.title}
+                  </h3>
+                  {post.excerpt && (
+                    <p className="text-sm text-gray-500 line-clamp-2">{post.excerpt}</p>
+                  )}
+                </div>
+                <div className="text-[#ff7675] md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   <ArrowRight size={20} />
                 </div>
               </Link>
@@ -133,7 +83,6 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Education & Honors */}
       <section className="grid md:grid-cols-2 gap-12">
         <div className="space-y-8">
           <h2 className="text-2xl font-bold flex items-center gap-2">
@@ -141,12 +90,14 @@ export const Home: React.FC = () => {
             Education
           </h2>
           <div className="space-y-4">
-            <div className="relative pl-8 border-l-2 border-gray-100 space-y-1">
-              <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-white border-2 border-[#ff7675]"></div>
-              <h3 className="font-bold text-lg">Computer Science & Technology</h3>
-              <p className="text-gray-600">University Name</p>
-              <p className="text-sm text-gray-400 font-medium">2022 - 2026</p>
-            </div>
+            {education.map((item) => (
+              <div key={`${item.school}-${item.period}`} className="relative pl-8 border-l-2 border-gray-100 space-y-1">
+                <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-white border-2 border-[#ff7675]"></div>
+                <h3 className="font-bold text-lg">{item.major}</h3>
+                <p className="text-gray-600">{item.school}</p>
+                <p className="text-sm text-gray-400 font-medium">{item.period}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -156,24 +107,17 @@ export const Home: React.FC = () => {
             Honors
           </h2>
           <div className="space-y-6">
-            <div className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center text-yellow-600 shrink-0">
-                <Trophy size={24} />
+            {honors.map((item) => (
+              <div key={item.title} className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <div className="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center text-yellow-600 shrink-0">
+                  <Trophy size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold">{item.title}</h3>
+                  <p className="text-sm text-gray-500">{item.description}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold">First Prize Scholarship</h3>
-                <p className="text-sm text-gray-500">Academic Excellence • 2023</p>
-              </div>
-            </div>
-            <div className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
-                <Trophy size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold">ACM-ICPC Regional Bronze</h3>
-                <p className="text-sm text-gray-500">Competitive Programming • 2024</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
