@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth, handleFirestoreError, OperationType } from '../firebase';
-import { Anime } from '../types';
-import { Star, Tv, ExternalLink, Info, Plus, X } from 'lucide-react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { Star, Tv, ExternalLink, Info } from 'lucide-react';
 
 interface BilibiliAnime {
   title: string;
