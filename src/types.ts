@@ -39,4 +39,26 @@ export interface Education {
   school: string;
   major: string;
   period: string;
+  interests: string[];
+  courses: string[];
+  summary: string;
+}
+
+export interface Project {
+  name: string;
+  description: string;
+  stack: string[];
+  status: string;
+  href: string;
+}
+
+export interface SkillGroup {
+  label: string;
+  items: string[];
+}
+
+export interface ContactLink {
+  label: string;
+  value: string;
+  href: string;
 }

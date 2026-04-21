@@ -1,18 +1,12 @@
 import express from "express";
 import serverless from "serverless-http";
+import { getBilibiliUid } from "../../src/lib/bilibiliConfig";
 
 const app = express();
 
 // API Route: Proxy Bilibili Anime List
 app.get("/api/bilibili/anime", async (req, res) => {
-  const vmid = process.env.BILIBILI_UID;
-  
-  if (!vmid) {
-    return res.status(400).json({ 
-      code: -1, 
-      message: "BILIBILI_UID environment variable is not set. Please add it in Netlify Environment Variables." 
-    });
-  }
+  const vmid = getBilibiliUid(process.env);
 
   const pn = req.query.pn || "1";
   const ps = req.query.ps || "30";

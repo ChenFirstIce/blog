@@ -1,5 +1,5 @@
 import { BookOpen, Github, Heart, Tv, User } from 'lucide-react';
-import type { Education, Honor } from '../types';
+import type { ContactLink, Education, Honor, Project, SkillGroup } from '../types';
 
 export const siteProfile = {
   name: 'Chen1Ice',
@@ -7,7 +7,7 @@ export const siteProfile = {
   avatar: '/logo.svg',
   github: 'https://github.com/ChenFirstIce',
   intro:
-    '计算机学生，记录课程学习、项目实践、随笔感想，也整理自己看过的动漫和朋友们的网站。',
+    '计算机学生，记录课程学习、项目实践和随笔，也整理自己看过的番剧与朋友们的网站。',
 };
 
 export const navigation = [
@@ -22,14 +22,56 @@ export const education: Education[] = [
     school: '中国海洋大学',
     major: '软件工程',
     period: '2023 - 2027',
+    interests: ['Web Engineering', 'Human-Computer Interaction', 'Knowledge Management'],
+    courses: ['Data Structures', 'Operating Systems', 'Computer Networks', 'Database Systems'],
+    summary:
+      'Focused on building practical software systems, organizing course notes, and turning learning traces into reusable knowledge.',
   },
 ];
 
 export const honors: Honor[] = [
   {
-    title: '课程与竞赛经历',
-    description: '这里可以替换为你的奖学金、竞赛、项目或荣誉经历。',
+    title: 'Coursework & Practice',
+    description: 'A growing archive of course notes, project experiments, and technical write-ups.',
   },
+];
+
+export const projects: Project[] = [
+  {
+    name: 'personal-blog',
+    description: 'Local Markdown based personal site with categories, tags, PDF embeds, and article reading mode.',
+    stack: ['React', 'Vite', 'TailwindCSS', 'Markdown'],
+    status: 'active',
+    href: '/blog',
+  },
+  {
+    name: 'anime-wall',
+    description: 'Bilibili following list proxy and responsive anime wall for tracking watched and followed series.',
+    stack: ['Express', 'Netlify Functions', 'Bilibili API'],
+    status: 'shipping',
+    href: '/anime',
+  },
+  {
+    name: 'course-notes',
+    description: 'Structured notes workflow for turning Obsidian Markdown into readable posts and reusable study notes.',
+    stack: ['Obsidian', 'Markdown', 'ReactMarkdown'],
+    status: 'iterating',
+    href: '/blog/category/course-notes',
+  },
+];
+
+export const skillGroups: SkillGroup[] = [
+  { label: 'Languages', items: ['TypeScript', 'JavaScript', 'Python', 'C/C++'] },
+  { label: 'Frontend', items: ['React', 'TailwindCSS', 'Responsive UI', 'Markdown Rendering'] },
+  { label: 'Backend', items: ['Node.js', 'Express', 'Netlify Functions', 'REST APIs'] },
+  { label: 'Tools', items: ['Git', 'Vite', 'Obsidian', 'VS Code'] },
+];
+
+export const contactLinks: ContactLink[] = [
+  { label: 'github', value: 'ChenFirstIce', href: siteProfile.github },
+  { label: 'blog', value: '/blog', href: '/blog' },
+  { label: 'anime', value: '/anime', href: '/anime' },
+  { label: 'friends', value: '/friends', href: '/friends' },
 ];
 
 export const socialLinks = [

@@ -26,6 +26,22 @@ Content.
 `;
 
 describe('parseMarkdownPost', () => {
+  it('parses posts without relying on a global Buffer', () => {
+    const originalBuffer = globalThis.Buffer;
+
+    try {
+      // Browsers do not expose Node's Buffer global.
+      (globalThis as typeof globalThis & { Buffer?: unknown }).Buffer = undefined;
+
+      const post = parseMarkdownPost('/src/content/posts/react-hooks.md', rawPost);
+
+      expect(post.title).toBe('React Hooks 笔记');
+      expect(post.body).toContain('# React Hooks');
+    } finally {
+      globalThis.Buffer = originalBuffer;
+    }
+  });
+
   it('extracts frontmatter, body, slug, tag slugs, and category slug', () => {
     const post = parseMarkdownPost('/src/content/posts/react-hooks.md', rawPost);
 

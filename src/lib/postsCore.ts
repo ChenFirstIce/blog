@@ -1,4 +1,3 @@
-import matter from 'gray-matter';
 import type { PostSummary, PostTag, TaxonomyItem } from '../types';
 import { filenameToSlug, slugify } from './slug';
 
@@ -15,6 +14,65 @@ interface RawPostMatter {
 function extractFrontmatterBlock(raw: string): string | undefined {
   const match = raw.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*(?:\r?\n|$)/);
   return match?.[1];
+}
+
+function extractBody(raw: string): string {
+  return raw.replace(/^---\s*\r?\n[\s\S]*?\r?\n---\s*(?:\r?\n|$)/, '').trim();
+}
+
+function stripWrappingQuotes(value: string): string {
+  const trimmed = value.trim();
+  const match = trimmed.match(/^(['"])(.*)\1$/);
+  return match ? match[2] : trimmed;
+}
+
+function stripInlineComment(value: string): string {
+  const quote = value.trim()[0];
+  if (quote === '"' || quote === "'") {
+    return value.trim();
+  }
+
+  return value.replace(/\s+#.*$/, '').trim();
+}
+
+function parseInlineStringArray(value: string, path: string): string[] {
+  const trimmed = stripInlineComment(value);
+  if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) {
+    throw new Error(`Post ${path} frontmatter field "tags" must be an array`);
+  }
+
+  const inner = trimmed.slice(1, -1).trim();
+  if (!inner) return [];
+
+  return inner.split(',').map((item) => stripWrappingQuotes(item));
+}
+
+function parseFrontmatter(raw: string, path: string): RawPostMatter {
+  const frontmatter = extractFrontmatterBlock(raw);
+  if (!frontmatter) return {};
+
+  const data: RawPostMatter = {};
+
+  for (const line of frontmatter.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+
+    const match = trimmed.match(/^([A-Za-z][\w-]*):\s*(.*)$/);
+    if (!match) continue;
+
+    const [, key, rawValue] = match;
+    const value = stripInlineComment(rawValue);
+
+    if (key === 'tags') {
+      data.tags = parseInlineStringArray(rawValue, path);
+    } else if (key === 'draft') {
+      data.draft = value === 'true';
+    } else if (key === 'title' || key === 'date' || key === 'category' || key === 'excerpt' || key === 'pdf') {
+      data[key] = stripWrappingQuotes(value);
+    }
+  }
+
+  return data;
 }
 
 function extractDateLiteral(raw: string): string | undefined {
@@ -83,8 +141,7 @@ function normalizeTags(tags: unknown, path: string): PostTag[] {
 }
 
 export function parseMarkdownPost(path: string, raw: string): PostSummary {
-  const parsed = matter(raw);
-  const data = parsed.data as RawPostMatter;
+  const data = parseFrontmatter(raw, path);
   const rawDateLiteral = extractDateLiteral(raw);
   const category = assertString(data.category, 'category', path);
 
@@ -96,7 +153,7 @@ export function parseMarkdownPost(path: string, raw: string): PostSummary {
     categorySlug: slugify(category),
     tags: normalizeTags(data.tags, path),
     excerpt: assertString(data.excerpt, 'excerpt', path),
-    body: parsed.content.trim(),
+    body: extractBody(raw),
     pdf: typeof data.pdf === 'string' && data.pdf.trim() ? data.pdf.trim() : undefined,
     draft: data.draft === true,
   };

@@ -4,113 +4,73 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github.css';
-import { ArrowLeft, Share2, Layout as LayoutIcon, FileText, Columns } from 'lucide-react';
-import { Mindmap } from '../components/Mindmap';
+import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { getPostBySlug } from '../lib/posts';
+import { extractMarkdownHeadings } from '../lib/headings';
+
+const PanelHeader: React.FC<{ title: string; meta?: string }> = ({ title, meta }) => (
+  <div className="terminal-panel-title flex items-center justify-between px-4 py-3 font-mono text-xs">
+    <span>{title}</span>
+    {meta && <span className="text-[var(--color-primary)]">{meta}</span>}
+  </div>
+);
 
 export const PostDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = getPostBySlug(slug);
-  const [viewMode, setViewMode] = useState<'markdown' | 'mindmap' | 'split'>('markdown');
   const [activeId, setActiveId] = useState<string>('');
-
-  const generateId = (text: string) => {
-    return text.toLowerCase()
-      .trim()
-      .replace(/\s+/g, '-')
-      .replace(/[^\u4e00-\u9fa5a-z0-9-]/g, '');
-  };
-
-  const getUniqueHeadingId = (text: string, counts: Map<string, number>) => {
-    const baseId = generateId(text) || 'heading';
-    const count = (counts.get(baseId) ?? 0) + 1;
-    counts.set(baseId, count);
-    return count === 1 ? baseId : `${baseId}-${count}`;
-  };
-
-  const stripMarkdown = (md: string) => {
-    return md
-      .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-      .replace(/[*_~`]/g, '')
-      .replace(/<[^>]*>/g, '')
-      .trim();
-  };
+  const [tocOpen, setTocOpen] = useState(true);
 
   const headings = useMemo(() => {
     const content = post?.body;
     if (!content) return [];
-
-    const headingRegex = /^(#{1,6})\s+(.*)$/gm;
-    const matches = [];
-    const headingCounts = new Map<string, number>();
-    let match;
-    while ((match = headingRegex.exec(content)) !== null) {
-      const level = match[1].length;
-      const text = stripMarkdown(match[2]);
-      const id = getUniqueHeadingId(text, headingCounts);
-      matches.push({ level, text, id });
-    }
-    return matches;
+    return extractMarkdownHeadings(content);
   }, [post?.body]);
 
-  const getText = (node: any): string => {
-    if (typeof node === 'string') return node;
-    if (Array.isArray(node)) return node.map(getText).join('');
-    if (node?.props?.children) return getText(node.props.children);
-    if (node?.children) return getText(node.children);
-    return '';
-  };
-
-  const renderedHeadingCounts = new Map<string, number>();
-
   const MarkdownComponents = {
-    h1: ({ children }: any) => {
-      const id = getUniqueHeadingId(getText(children), renderedHeadingCounts);
-      return <h1 id={id} className="scroll-mt-24">{children}</h1>;
-    },
-    h2: ({ children }: any) => {
-      const id = getUniqueHeadingId(getText(children), renderedHeadingCounts);
-      return <h2 id={id} className="scroll-mt-24">{children}</h2>;
-    },
-    h3: ({ children }: any) => {
-      const id = getUniqueHeadingId(getText(children), renderedHeadingCounts);
-      return <h3 id={id} className="scroll-mt-24">{children}</h3>;
-    },
-    h4: ({ children }: any) => {
-      const id = getUniqueHeadingId(getText(children), renderedHeadingCounts);
-      return <h4 id={id} className="scroll-mt-24">{children}</h4>;
-    },
-    h5: ({ children }: any) => {
-      const id = getUniqueHeadingId(getText(children), renderedHeadingCounts);
-      return <h5 id={id} className="scroll-mt-24">{children}</h5>;
-    },
-    h6: ({ children }: any) => {
-      const id = getUniqueHeadingId(getText(children), renderedHeadingCounts);
-      return <h6 id={id} className="scroll-mt-24">{children}</h6>;
-    },
+    h1: ({ children }: any) => <h1 className="scroll-mt-24">{children}</h1>,
+    h2: ({ children }: any) => <h2 className="scroll-mt-24">{children}</h2>,
+    h3: ({ children }: any) => <h3 className="scroll-mt-24">{children}</h3>,
+    h4: ({ children }: any) => <h4 className="scroll-mt-24">{children}</h4>,
+    h5: ({ children }: any) => <h5 className="scroll-mt-24">{children}</h5>,
+    h6: ({ children }: any) => <h6 className="scroll-mt-24">{children}</h6>,
     table: ({ children }: any) => (
-      <div className="overflow-x-auto my-8 rounded-2xl border border-gray-100 shadow-sm">
-        <table className="min-w-full divide-y divide-gray-100 m-0">
+      <div className="my-8 overflow-x-auto rounded-lg border border-[var(--color-border)]">
+        <table className="m-0 min-w-full divide-y divide-[var(--color-border)]">
           {children}
         </table>
       </div>
     ),
     img: ({ src, alt, ...props }: any) => (
-      <span className="block my-10 text-center">
+      <span className="my-10 block text-center">
         <img
           src={src}
           alt={alt}
-          className="rounded-3xl shadow-xl mx-auto max-w-full hover:scale-[1.02] transition-transform duration-500"
+          className="mx-auto max-w-full rounded-lg border border-[var(--color-border)] transition-transform duration-300 hover:scale-[1.01]"
           referrerPolicy="no-referrer"
           {...props}
         />
-        {alt && <span className="block mt-4 text-xs text-gray-400 font-medium italic">{alt}</span>}
+        {alt && <span className="mt-3 block font-mono text-xs text-[var(--color-muted)]">{alt}</span>}
       </span>
     ),
   };
 
   useEffect(() => {
-    if (viewMode !== 'markdown' || headings.length === 0) return;
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>('.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6'));
+    headings.forEach((heading, index) => {
+      const node = nodes[index];
+      if (node) node.id = heading.id;
+    });
+  }, [headings]);
+
+  useEffect(() => {
+    if (headings.length === 0) return;
+
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>('.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6'));
+    headings.forEach((heading, index) => {
+      const node = nodes[index];
+      if (node) node.id = heading.id;
+    });
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -120,7 +80,7 @@ export const PostDetail: React.FC = () => {
           }
         });
       },
-      { rootMargin: '-100px 0% -80% 0%' }
+      { rootMargin: '-100px 0% -80% 0%' },
     );
 
     headings.forEach((heading) => {
@@ -129,7 +89,7 @@ export const PostDetail: React.FC = () => {
     });
 
     return () => observer.disconnect();
-  }, [headings, viewMode]);
+  }, [headings]);
 
   useEffect(() => {
     setActiveId('');
@@ -137,184 +97,120 @@ export const PostDetail: React.FC = () => {
 
   if (!post) {
     return (
-      <div className="reveal mx-auto max-w-3xl text-center py-24 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <h1 className="text-4xl font-bold">Post not found</h1>
-        <p className="text-gray-500">
-          The article you are looking for does not exist or has not been published.
-        </p>
-        <Link
-          to="/blog"
-          className="interactive inline-flex items-center gap-2 px-5 py-3 bg-[#ff7675] text-white rounded-xl text-sm font-bold hover:bg-[#ff5e5d] transition-all shadow-lg shadow-red-100"
-        >
-          <ArrowLeft size={16} /> Back to Blog
-        </Link>
+      <div className="reveal terminal-panel mx-auto max-w-3xl overflow-hidden text-center">
+        <PanelHeader title="404.md" />
+        <div className="space-y-5 p-8">
+          <h1 className="text-4xl font-bold">Post not found</h1>
+          <p className="text-[var(--color-muted)]">The article you are looking for does not exist or has not been published.</p>
+          <Link
+            to="/blog"
+            className="interactive inline-flex items-center gap-2 rounded-lg bg-[var(--color-primary)] px-4 py-3 font-mono text-sm font-bold text-[var(--color-primary-contrast)]"
+          >
+            <ArrowLeft size={16} /> Back to Blog
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <article className={`mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ${viewMode === 'split' ? 'max-w-none px-4 md:px-8' : 'max-w-6xl'}`}>
-      <div className="flex items-center justify-between">
-        <Link to="/blog" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#ff7675] transition-colors">
-          <ArrowLeft size={16} /> Back to Blog
+    <article className="mx-auto max-w-6xl space-y-7">
+      <div className="reveal flex items-center justify-between">
+        <Link to="/blog" className="interactive inline-flex items-center gap-2 rounded-lg border border-[var(--color-border)] px-3 py-2 font-mono text-sm font-bold text-[var(--color-muted)] hover:text-[var(--color-text)]">
+          <ArrowLeft size={16} /> cd ../blog
         </Link>
       </div>
 
-      <header className="reveal space-y-4">
-        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
-          <span>{post.date}</span>
-          {post.category && (
-            <Link
-              to={`/blog/category/${post.categorySlug}`}
-              className="font-bold uppercase tracking-widest hover:text-[#ff7675] transition-colors"
-            >
+      <header className="reveal terminal-panel overflow-hidden">
+        <PanelHeader title={`posts/${post.slug}.md`} meta={post.date} />
+        <div className="space-y-5 p-5 sm:p-7">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-xs text-[var(--color-muted)]">
+            <Link to={`/blog/category/${post.categorySlug}`} className="text-[var(--color-primary)] hover:underline">
               {post.category}
             </Link>
-          )}
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold leading-tight">{post.title}</h1>
-        {post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2">
             {post.tags.map((tag) => (
-              <Link
-                key={tag.slug}
-                to={`/blog/tag/${tag.slug}`}
-                className="text-xs font-bold text-gray-400 hover:text-[#ff7675] transition-colors"
-              >
+              <Link key={tag.slug} to={`/blog/tag/${tag.slug}`} className="terminal-chip">
                 #{tag.label}
               </Link>
             ))}
           </div>
-        )}
+          <h1 className="text-4xl font-black leading-tight tracking-tight text-[var(--color-text)] md:text-5xl">
+            # {post.title}
+          </h1>
+          <p className="max-w-3xl text-base leading-7 text-[var(--color-muted)]">{post.excerpt}</p>
+        </div>
       </header>
 
-      <div className="reveal flex flex-wrap items-center justify-between gap-4">
-        <div className="flex p-1 bg-gray-100 rounded-xl w-fit">
-          <button
-            onClick={() => setViewMode('markdown')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              viewMode === 'markdown' ? 'bg-white shadow-sm text-[#ff7675]' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <FileText size={16} /> Article
-          </button>
-          <button
-            onClick={() => setViewMode('mindmap')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              viewMode === 'mindmap' ? 'bg-white shadow-sm text-[#ff7675]' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <LayoutIcon size={16} /> Mindmap
-          </button>
-          <button
-            onClick={() => setViewMode('split')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              viewMode === 'split' ? 'bg-white shadow-sm text-[#ff7675]' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <Columns size={16} /> Split View
-          </button>
-        </div>
-      </div>
+      <div className="reveal grid gap-7 xl:grid-cols-[1fr_18rem]">
+        <main className="terminal-panel min-w-0 overflow-hidden">
+          <PanelHeader title="rendered article" />
 
-      <div className="reveal flex flex-col lg:flex-row gap-12 items-start">
-        <div className={`flex-1 min-w-0 w-full bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-500 ${viewMode === 'split' ? 'h-[700px]' : ''}`}>
-          {viewMode === 'markdown' ? (
-            <div className="p-8 md:p-12">
-              <div className="markdown-body prose prose-red max-w-none">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeHighlight]}
-                  components={MarkdownComponents}
-                >
-                  {post.body}
-                </ReactMarkdown>
-              </div>
-              {post.pdf && (
-                <section className="mt-10 reveal space-y-4">
-                  <h2 className="text-2xl font-bold">Related PDF</h2>
-                  <div className="h-[70vh] min-h-[420px] overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white shadow-sm">
-                    <iframe src={post.pdf} title={`${post.title} PDF`} className="h-full w-full" />
-                  </div>
-                </section>
-              )}
+          <div className="p-5 sm:p-8">
+            <div className="markdown-body prose max-w-none">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+                components={MarkdownComponents}
+              >
+                {post.body}
+              </ReactMarkdown>
             </div>
-          ) : viewMode === 'mindmap' ? (
-            <div className="p-8 space-y-4 h-[600px]">
-              <p className="text-sm text-gray-400 italic">Visualizing the structure of this post...</p>
-              <Mindmap markdown={post.body} className="!h-[500px]" />
-            </div>
-          ) : (
-            <div className="flex flex-col lg:flex-row h-full divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
-              <div className="flex-1 flex flex-col p-6 space-y-4 overflow-hidden min-h-[340px]">
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <FileText size={14} /> Markdown
-                  </div>
+            {post.pdf && (
+              <section className="mt-10 space-y-4">
+                <h2 className="font-mono text-2xl font-bold text-[var(--color-text)]">## Related PDF</h2>
+                <div className="h-[70vh] min-h-[420px] overflow-hidden rounded-lg border border-[var(--color-border)] bg-white">
+                  <iframe src={post.pdf} title={`${post.title} PDF`} className="h-full w-full" />
                 </div>
-                <textarea
-                  readOnly
-                  value={post.body}
-                  className="flex-1 w-full p-4 bg-gray-50 rounded-2xl border-none font-mono text-sm resize-none cursor-not-allowed opacity-80"
-                />
-              </div>
-              <div className="flex-1 flex flex-col p-6 space-y-4 overflow-hidden min-h-[340px]">
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                  <LayoutIcon size={14} /> Real-time Mindmap
-                </div>
-                <div className="flex-1 relative rounded-2xl overflow-hidden border border-gray-50">
-                  <Mindmap markdown={post.body} className="!h-full border-none" />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+              </section>
+            )}
+          </div>
+        </main>
 
-        {viewMode === 'markdown' && headings.length > 0 && (
-          <aside className="hidden lg:block w-64 shrink-0 sticky top-24">
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                <div className="w-1 h-4 bg-[#ff7675] rounded-full"></div>
-                Table of Contents
-              </div>
-              <nav className="space-y-1 max-h-[calc(100vh-200px)] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-200 scroll-smooth">
-                {headings.map((heading, index) => (
-                  <a
-                    key={`${heading.id}-${index}`}
-                    href={`#${heading.id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document.getElementById(heading.id)?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className={`block py-1.5 text-sm transition-all duration-200 hover:text-[#ff7675] hover:translate-x-1 ${
-                      activeId === heading.id ? 'text-[#ff7675] font-bold translate-x-1' : 'text-gray-500'
-                    } ${
-                      heading.level === 1 ? 'font-bold' :
-                      heading.level === 2 ? 'pl-4' :
-                      heading.level === 3 ? 'pl-8 text-xs' :
-                      'pl-12 text-xs'
-                    }`}
-                  >
-                    {heading.text}
-                  </a>
-                ))}
+        {headings.length > 0 && (
+          <aside className="terminal-panel h-fit overflow-hidden xl:sticky xl:top-24">
+            <details open={tocOpen} onToggle={(event) => setTocOpen(event.currentTarget.open)}>
+              <summary className="terminal-panel-title interactive flex list-none items-center gap-2 px-4 py-3 font-mono text-sm font-bold text-[var(--color-text)] marker:hidden">
+                <span className="grid size-6 place-items-center rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-primary)] transition-transform duration-200 group-open:rotate-90">
+                  <ChevronRight size={14} className={`transition-transform duration-200 ${tocOpen ? 'rotate-90' : ''}`} />
+                </span>
+                <span>Table of Contents</span>
+              </summary>
+              <nav className="max-h-[calc(100vh-180px)] overflow-y-auto p-4">
+                <ul className="space-y-1 font-mono text-sm">
+                  {headings
+                    .filter((heading) => heading.level >= 2 && heading.level <= 3)
+                    .map((heading, index) => (
+                      <li key={`${heading.id}-${index}`}>
+                        <a
+                          href={`#${heading.id}`}
+                          onClick={() => {
+                            setActiveId(heading.id);
+                          }}
+                          className={`block rounded-md py-1.5 transition-colors hover:text-[var(--color-text)] ${
+                            activeId === heading.id ? 'text-[var(--color-primary)]' : 'text-[var(--color-muted)]'
+                          } ${heading.level === 3 ? 'pl-4 text-xs' : ''}`}
+                        >
+                          {heading.level === 2 ? '##' : '###'} {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                </ul>
               </nav>
-            </div>
+            </details>
           </aside>
         )}
       </div>
 
-      <footer className="reveal pt-12 border-t border-gray-100 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <img src="https://picsum.photos/seed/chen1ice/100/100" className="w-10 h-10 rounded-full" alt="Author" referrerPolicy="no-referrer" />
-          <div>
-            <p className="text-sm font-bold">Chen1Ice</p>
-            <p className="text-xs text-gray-400">CS Student & Anime Lover</p>
-          </div>
+      <footer className="reveal terminal-panel overflow-hidden">
+        <PanelHeader title="post.meta" />
+        <div className="flex flex-col gap-4 p-5 font-mono text-sm text-[var(--color-muted)] sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            <span className="text-[var(--color-primary)]">author:</span> Chen1Ice
+          </p>
+          <p>
+            <span className="text-[var(--color-primary)]">mode:</span> local markdown
+          </p>
         </div>
-        <button className="p-2 text-gray-400 hover:text-[#ff7675] transition-colors" aria-label="Share post">
-          <Share2 size={20} />
-        </button>
       </footer>
     </article>
   );

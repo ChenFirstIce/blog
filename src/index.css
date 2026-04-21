@@ -2,17 +2,42 @@
 
 @theme {
   --font-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
 @layer base {
   :root {
-    --color-bg: #fff9ee;
-    --color-text: #3e342d;
-    --color-muted: rgba(62, 52, 45, 0.68);
-    --color-border: rgba(62, 52, 45, 0.12);
-    --color-accent: #fad0d8;
-    --color-accent-soft: rgba(250, 208, 216, 0.55);
-    --color-lime: #daf480;
+    --color-bg: #f7f2ec;
+    --color-text: #2f2a26;
+    --color-primary: #2f2a26;
+    --color-primary-contrast: #ffffff;
+    --color-muted: rgba(47, 42, 38, 0.68);
+    --color-border: rgba(47, 42, 38, 0.12);
+    --color-surface: rgba(255, 255, 255, 0.64);
+    --color-surface-solid: #ffffff;
+    --color-accent: #d1fa94;
+    --color-accent-soft: rgba(209, 250, 148, 0.35);
+    --color-accent-strong: #2f2a26;
+    --color-lime: #d1fa94;
+    --color-code: #2f2a26;
+    --color-code-text: #ffffff;
+  }
+
+  html[data-theme='dark'] {
+    --color-bg: #2f2a26;
+    --color-text: #ffffff;
+    --color-primary: #d1fa94;
+    --color-primary-contrast: #2f2a26;
+    --color-muted: rgba(255, 255, 255, 0.68);
+    --color-border: rgba(255, 255, 255, 0.16);
+    --color-surface: rgba(255, 255, 255, 0.07);
+    --color-surface-solid: #3b352f;
+    --color-accent: #d1fa94;
+    --color-accent-soft: rgba(209, 250, 148, 0.12);
+    --color-accent-strong: #d1fa94;
+    --color-lime: #d1fa94;
+    --color-code: #25211e;
+    --color-code-text: #ffffff;
   }
 
   html {
@@ -21,43 +46,83 @@
 
   body {
     background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  html[data-theme='dark'] .bg-white {
+    color: #2f2a26;
   }
 
   .markdown-body {
-    @apply leading-relaxed text-gray-700 font-sans;
+    @apply leading-relaxed font-sans;
+    color: var(--color-muted);
   }
   .markdown-body h1 {
-    @apply text-4xl font-bold mb-8 mt-12 text-gray-900 tracking-tight;
+    @apply text-4xl font-bold mb-8 mt-12 tracking-tight;
+    color: var(--color-text);
+  }
+  .markdown-body h1::before {
+    content: "# ";
+    color: var(--color-primary);
   }
   .markdown-body h2 {
-    @apply text-2xl font-bold mb-6 mt-10 text-gray-800 tracking-tight border-b border-gray-100 pb-2;
+    @apply text-2xl font-bold mb-6 mt-10 tracking-tight border-b pb-2;
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+  .markdown-body h2::before {
+    content: "## ";
+    color: var(--color-primary);
   }
   .markdown-body h3 {
-    @apply text-xl font-bold mb-4 mt-8 text-gray-800;
+    @apply text-xl font-bold mb-4 mt-8;
+    color: var(--color-text);
+  }
+  .markdown-body h3::before {
+    content: "### ";
+    color: var(--color-primary);
   }
   .markdown-body h4 {
-    @apply text-lg font-bold mb-3 mt-6 text-gray-800;
+    @apply text-lg font-bold mb-3 mt-6;
+    color: var(--color-text);
+  }
+  .markdown-body h4::before {
+    content: "#### ";
+    color: var(--color-primary);
   }
   .markdown-body p {
-    @apply mb-6 text-lg text-gray-600 leading-relaxed;
+    @apply mb-6 text-lg leading-relaxed;
   }
   .markdown-body ul {
-    @apply list-disc list-outside mb-6 ml-6 space-y-2 text-gray-600;
+    @apply list-disc list-outside mb-6 ml-6 space-y-2;
+    color: var(--color-muted);
   }
   .markdown-body ol {
-    @apply list-decimal list-outside mb-6 ml-6 space-y-2 text-gray-600;
+    @apply list-decimal list-outside mb-6 ml-6 space-y-2;
+    color: var(--color-muted);
   }
   .markdown-body li {
     @apply pl-1;
   }
   .markdown-body blockquote {
-    @apply border-l-4 border-[#ff7675] pl-6 py-1 italic text-gray-500 my-8 bg-red-50/30 rounded-r-2xl;
+    @apply relative my-8 rounded-lg bg-[var(--color-accent-soft)] py-5 pl-9 pr-6 italic;
+    color: var(--color-muted);
+  }
+  .markdown-body blockquote::before {
+    content: ">";
+    color: var(--color-primary);
+    font-weight: 800;
+    left: 1rem;
+    position: absolute;
+    top: 1.25rem;
   }
   .markdown-body code:not(pre code) {
-    @apply bg-red-50 px-1.5 py-0.5 rounded-md text-sm font-mono text-[#ff7675] font-medium;
+    @apply bg-[var(--color-accent-soft)] px-1.5 py-0.5 rounded-md text-sm font-mono text-[var(--color-primary)] font-medium;
   }
   .markdown-body pre {
-    @apply bg-[#1a1b26] text-gray-100 p-6 rounded-2xl overflow-x-auto my-8 text-sm font-mono shadow-xl;
+    @apply p-6 rounded-lg overflow-x-auto my-8 text-sm font-mono;
+    background: var(--color-code);
+    color: var(--color-code-text);
   }
   .markdown-body pre code {
     @apply bg-transparent p-0 text-inherit font-mono leading-relaxed;
@@ -72,19 +137,25 @@
     @apply w-full border-collapse m-0;
   }
   .markdown-body th {
-    @apply bg-gray-50/80 px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100;
+    @apply px-6 py-4 text-left text-xs font-black uppercase tracking-widest border-b;
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
   }
   .markdown-body td {
-    @apply px-6 py-4 text-sm text-gray-600 border-b border-gray-50;
+    @apply px-6 py-4 text-sm border-b;
+    border-color: var(--color-border);
+    color: var(--color-muted);
   }
   .markdown-body tr:last-child td {
     @apply border-b-0;
   }
   .markdown-body tr:nth-child(even) td {
-    @apply bg-gray-50/30;
+    background: var(--color-surface);
   }
   .markdown-body tr:hover td {
-    @apply bg-red-50/30 text-gray-900;
+    @apply bg-[var(--color-accent-soft)];
+    color: var(--color-text);
   }
   .markdown-body img {
     @apply m-0;
@@ -97,7 +168,11 @@
 
 .interactive:hover {
   transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 14px 30px rgba(62, 52, 45, 0.08);
+  box-shadow: 0 14px 30px rgba(47, 42, 38, 0.08);
+}
+
+html[data-theme='dark'] .interactive:hover {
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
 }
 
 .interactive:focus-visible {
@@ -114,6 +189,34 @@
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.terminal-panel {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 0.5rem;
+}
+
+.terminal-panel-title {
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-muted);
+}
+
+.terminal-prompt::before {
+  color: var(--color-primary);
+  content: '$ ';
+  font-weight: 800;
+}
+
+.terminal-chip {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 0.5rem;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.375rem 0.625rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -2,7 +2,7 @@
 title: "课程笔记示例：Markdown 到思维导图"
 date: "2026-04-18"
 category: "学习笔记"
-tags: ["Course", "Mindmap", "Markdown"]
+tags: ["Course", "Markdown", "Notes"]
 excerpt: "展示一篇学习笔记如何同时以文章和思维导图方式查看。"
 pdf: "/pdf/course-demo.pdf"
 draft: false

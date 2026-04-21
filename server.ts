@@ -2,6 +2,8 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
+import "dotenv/config";
+import { getBilibiliUid } from "./src/lib/bilibiliConfig";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,14 +14,7 @@ async function startServer() {
 
   // API Route: Proxy Bilibili Anime List
   app.get("/api/bilibili/anime", async (req, res) => {
-    const vmid = process.env.BILIBILI_UID;
-    
-    if (!vmid) {
-      return res.status(400).json({ 
-        code: -1, 
-        message: "BILIBILI_UID environment variable is not set. Please add it in Settings." 
-      });
-    }
+    const vmid = getBilibiliUid(process.env);
 
     const pn = req.query.pn || "1";
     const ps = req.query.ps || "30";
