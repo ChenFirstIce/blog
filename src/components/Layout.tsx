@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { navigation, siteProfile, socialLinks } from '../content/site';
+import { setupRevealOnScroll } from '../lib/reveal';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setupRevealOnScroll();
+  }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-[#fff8f3] text-[#2d3436] font-sans flex flex-col">
+    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)] font-sans flex flex-col">
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">

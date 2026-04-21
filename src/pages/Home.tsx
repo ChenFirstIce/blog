@@ -9,7 +9,7 @@ export const Home: React.FC = () => {
 
   return (
     <div className="space-y-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <section className="flex flex-col md:flex-row items-center gap-10 pt-8">
+      <section className="reveal flex flex-col md:flex-row items-center gap-10 pt-8">
         <div className="flex-1 space-y-6">
           <div className="space-y-2">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
@@ -33,7 +33,7 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="space-y-8">
+      <section className="reveal space-y-8">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <BookOpen className="text-[#ff7675]" />
@@ -54,7 +54,7 @@ export const Home: React.FC = () => {
               <Link
                 key={post.slug}
                 to={`/blog/${post.slug}`}
-                className="group flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1"
+                className="interactive group flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1"
               >
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-3">
@@ -83,7 +83,7 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="grid md:grid-cols-2 gap-12">
+      <section className="reveal grid md:grid-cols-2 gap-12">
         <div className="space-y-8">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <GraduationCap className="text-[#ff7675]" />

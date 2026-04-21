@@ -137,14 +137,14 @@ export const PostDetail: React.FC = () => {
 
   if (!post) {
     return (
-      <div className="mx-auto max-w-3xl text-center py-24 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="reveal mx-auto max-w-3xl text-center py-24 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <h1 className="text-4xl font-bold">Post not found</h1>
         <p className="text-gray-500">
           The article you are looking for does not exist or has not been published.
         </p>
         <Link
           to="/blog"
-          className="inline-flex items-center gap-2 px-5 py-3 bg-[#ff7675] text-white rounded-xl text-sm font-bold hover:bg-[#ff5e5d] transition-all shadow-lg shadow-red-100"
+          className="interactive inline-flex items-center gap-2 px-5 py-3 bg-[#ff7675] text-white rounded-xl text-sm font-bold hover:bg-[#ff5e5d] transition-all shadow-lg shadow-red-100"
         >
           <ArrowLeft size={16} /> Back to Blog
         </Link>
@@ -160,7 +160,7 @@ export const PostDetail: React.FC = () => {
         </Link>
       </div>
 
-      <header className="space-y-4">
+      <header className="reveal space-y-4">
         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
           <span>{post.date}</span>
           {post.category && (
@@ -188,7 +188,7 @@ export const PostDetail: React.FC = () => {
         )}
       </header>
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="reveal flex flex-wrap items-center justify-between gap-4">
         <div className="flex p-1 bg-gray-100 rounded-xl w-fit">
           <button
             onClick={() => setViewMode('markdown')}
@@ -217,7 +217,7 @@ export const PostDetail: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-12 items-start">
+      <div className="reveal flex flex-col lg:flex-row gap-12 items-start">
         <div className={`flex-1 min-w-0 w-full bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-500 ${viewMode === 'split' ? 'h-[700px]' : ''}`}>
           {viewMode === 'markdown' ? (
             <div className="p-8 md:p-12">
@@ -304,7 +304,7 @@ export const PostDetail: React.FC = () => {
         )}
       </div>
 
-      <footer className="pt-12 border-t border-gray-100 flex justify-between items-center">
+      <footer className="reveal pt-12 border-t border-gray-100 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <img src="https://picsum.photos/seed/chen1ice/100/100" className="w-10 h-10 rounded-full" alt="Author" referrerPolicy="no-referrer" />
           <div>

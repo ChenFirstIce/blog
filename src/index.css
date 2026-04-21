@@ -5,6 +5,24 @@
 }
 
 @layer base {
+  :root {
+    --color-bg: #fff9ee;
+    --color-text: #3e342d;
+    --color-muted: rgba(62, 52, 45, 0.68);
+    --color-border: rgba(62, 52, 45, 0.12);
+    --color-accent: #fad0d8;
+    --color-accent-soft: rgba(250, 208, 216, 0.55);
+    --color-lime: #daf480;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-bg);
+  }
+
   .markdown-body {
     @apply leading-relaxed text-gray-700 font-sans;
   }
@@ -70,5 +88,45 @@
   }
   .markdown-body img {
     @apply m-0;
+  }
+}
+
+.interactive {
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.interactive:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 14px 30px rgba(62, 52, 45, 0.08);
+}
+
+.interactive:focus-visible {
+  outline: 3px solid var(--color-lime);
+  outline-offset: 3px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .interactive,
+  .reveal {
+    transition: none;
+  }
+
+  .interactive:hover {
+    transform: none;
   }
 }

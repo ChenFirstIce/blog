@@ -62,14 +62,14 @@ export const AnimeList: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <header className="reveal flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div className="space-y-4">
           <h1 className="text-4xl font-bold">Anime Wall</h1>
           <p className="text-gray-500">Tracking my anime journey from Bilibili.</p>
         </div>
       </header>
 
-      <div className="space-y-6">
+      <div className="reveal space-y-6">
         {error && (
           <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 animate-in fade-in duration-300">
             <Info size={20} />
@@ -88,7 +88,7 @@ export const AnimeList: React.FC = () => {
             </div>
           ) : (
             bilibiliAnime.map((item) => (
-            <div key={item.season_id} className="group relative bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
+            <div key={item.season_id} className="interactive group relative bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col">
               <div className="relative aspect-[3/4] overflow-hidden">
                 <img 
                   src={item.cover} 

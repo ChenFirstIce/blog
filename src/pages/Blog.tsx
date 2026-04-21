@@ -31,7 +31,7 @@ export const Blog: React.FC = () => {
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <header className="reveal flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-4">
           <h1 className="text-4xl font-bold">Blog</h1>
           <p className="text-gray-500">Sharing my learning journey and random thoughts.</p>
@@ -39,7 +39,7 @@ export const Blog: React.FC = () => {
       </header>
 
       {isFiltered && (
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="reveal flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2 px-4 py-2 bg-red-50 text-[#ff7675] rounded-xl text-sm font-bold animate-in fade-in zoom-in duration-300">
             {tagSlug ? <TagIcon size={14} /> : <ListFilter size={14} />}
             <span>
@@ -58,7 +58,7 @@ export const Blog: React.FC = () => {
       )}
 
       <div className="flex flex-col lg:flex-row gap-12">
-        <div className="flex-1 space-y-8">
+        <div className="reveal flex-1 space-y-8">
           {filteredPosts.length === 0 ? (
             <div className="text-center py-24 bg-white rounded-[40px] border border-dashed border-gray-200">
               <BookOpen className="mx-auto text-gray-200 mb-6" size={64} />
@@ -77,7 +77,7 @@ export const Blog: React.FC = () => {
               <Link
                 key={post.slug}
                 to={`/blog/${post.slug}`}
-                className="block p-8 bg-white rounded-[40px] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-red-50/50 transition-all hover:-translate-y-1 group"
+                className="interactive block p-8 bg-white rounded-[40px] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-red-50/50 transition-all hover:-translate-y-1 group"
               >
                 <article>
                   <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
@@ -122,7 +122,7 @@ export const Blog: React.FC = () => {
           )}
         </div>
 
-        <aside className="w-full lg:w-80 space-y-10">
+        <aside className="reveal w-full lg:w-80 space-y-10">
           <section className="p-8 bg-white rounded-[40px] border border-gray-100 shadow-sm space-y-6">
             <h3 className="text-xl font-bold flex items-center gap-3">
               <ListFilter size={20} className="text-[#ff7675]" />
