@@ -22,10 +22,10 @@ export const education: Education[] = [
     school: '中国海洋大学',
     major: '软件工程',
     period: '2023 - 2027',
-    interests: ['Web Engineering', 'Human-Computer Interaction', 'Knowledge Management'],
+    interests: ['Web Engineering', 'Knowledge Management'],
     courses: ['Data Structures', 'Operating Systems', 'Computer Networks', 'Database Systems'],
     summary:
-      'Focused on building practical software systems, organizing course notes, and turning learning traces into reusable knowledge.',
+      '初步摸索学习方式和生活方式的未成年成年人',
   },
 ];
 
