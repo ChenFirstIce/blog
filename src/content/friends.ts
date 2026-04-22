@@ -6,5 +6,6 @@ export const friends: Friend[] = [
     name: '捕手小芳',
     url: 'https://blog.linda1729.com',
     description: '灵魂捕手小芳，一个集美貌与灵魂于一体的女子~',
+    avatar: 'https://blog.linda1729.com/medias/linda1729icon.png',
   },
 ];

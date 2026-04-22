@@ -1,0 +1,59 @@
+<h2>Markdown rendering upgrade</h2>
+<p class="subtitle">Pick the direction that best fits this blog: terminal-like, readable, and complete enough for notes.</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="border:1px solid rgba(47,42,38,.14);border-radius:8px;overflow:hidden;background:#fffaf5;color:#2f2a26;font-family:Inter,system-ui,sans-serif">
+        <div style="padding:10px 14px;border-bottom:1px solid rgba(47,42,38,.14);font:12px monospace;color:rgba(47,42,38,.64)">rendered article</div>
+        <div style="padding:18px">
+          <div style="font-weight:900;font-size:22px;margin-bottom:12px">## Current + style polish</div>
+          <p style="line-height:1.65;margin:0 0 12px;color:rgba(47,42,38,.72)">Paragraphs, lists, tables, blockquotes, images, and highlighted code.</p>
+          <div style="background:#2f2a26;color:#fff;border-radius:8px;padding:12px;font:12px monospace;margin:12px 0">const ok = true;</div>
+          <div style="border-left:4px solid #d1fa94;background:rgba(209,250,148,.25);padding:10px;border-radius:6px;color:rgba(47,42,38,.72)">GFM task lists and tables look native.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Lightweight completion</h3>
+      <p>Keep current plugins, add stronger component styling for links, code blocks, task lists, footnotes CSS, headings, tables, and blockquotes. No new syntax beyond GFM.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="border:1px solid rgba(47,42,38,.14);border-radius:8px;overflow:hidden;background:#fffaf5;color:#2f2a26;font-family:Inter,system-ui,sans-serif">
+        <div style="padding:10px 14px;border-bottom:1px solid rgba(47,42,38,.14);font:12px monospace;color:rgba(47,42,38,.64)">rendered article</div>
+        <div style="padding:18px">
+          <div style="font-weight:900;font-size:22px;margin-bottom:12px">## Full notes renderer</div>
+          <p style="line-height:1.65;margin:0 0 12px;color:rgba(47,42,38,.72)">GFM plus math, footnotes, raw HTML handling, anchors, and safer external links.</p>
+          <div style="background:#2f2a26;color:#fff;border-radius:8px;padding:12px;font:12px monospace;margin:12px 0">$$ E = mc^2 $$</div>
+          <div style="display:flex;gap:8px;align-items:center;font:12px monospace;color:#2f2a26"><span style="background:#d1fa94;border-radius:999px;padding:4px 8px">footnote</span><span style="background:rgba(47,42,38,.08);border-radius:999px;padding:4px 8px">anchor</span><span style="background:rgba(47,42,38,.08);border-radius:999px;padding:4px 8px">HTML</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Comprehensive renderer</h3>
+      <p>Add remark-math, rehype-katex, rehype-raw, rehype-slug, rehype-autolink-headings, and rehype-sanitize. Best for Obsidian/course notes and future posts.</p>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons">
+  <div class="pros">
+    <h4>Recommendation</h4>
+    <ul>
+      <li>Use B if you want Markdown to be broadly future-proof.</li>
+      <li>Keep the terminal panel visual language: compact borders, mono labels, lime accents, readable long-form text.</li>
+      <li>Add tests around plugin wiring and post rendering assumptions before implementation.</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>Scope guard</h4>
+    <ul>
+      <li>Do not add MDX or executable components unless you explicitly need interactive posts.</li>
+      <li>Do not let raw HTML bypass sanitization.</li>
+      <li>Do not redesign the whole article page; keep changes scoped to Markdown rendering.</li>
+    </ul>
+  </div>
+</div>

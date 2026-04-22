@@ -40,7 +40,7 @@ export interface Education {
   major: string;
   period: string;
   interests: string[];
-  courses: string[];
+  courses?: string[];
   summary: string;
 }
 
