@@ -125,7 +125,6 @@ const EducationTimeline = () => (
                     ))}
                   </div>
                 </div>
-                /*
                 <div>
                   <p className="mb-3 font-mono text-xs font-bold uppercase text-[var(--color-muted)]">core courses</p>
                   <div className="flex flex-wrap gap-2">
@@ -134,7 +133,6 @@ const EducationTimeline = () => (
                     ))}
                   </div>
                 </div>
-                */
               </div>
             </div>
           </article>

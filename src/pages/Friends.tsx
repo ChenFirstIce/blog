@@ -1,6 +1,7 @@
 import React from 'react';
 import { friends } from '../content/friends';
 import { ExternalLink, Heart, Link2 } from 'lucide-react';
+import { toExternalUrl } from '../lib/externalUrl';
 
 const PanelHeader: React.FC<{ title: string; meta?: string }> = ({ title, meta }) => (
   <div className="terminal-panel-title flex items-center justify-between px-4 py-3 font-mono text-xs">
@@ -11,7 +12,7 @@ const PanelHeader: React.FC<{ title: string; meta?: string }> = ({ title, meta }
 
 const getDisplayUrl = (url: string) => {
   try {
-    const parsed = new URL(url);
+    const parsed = new URL(toExternalUrl(url));
     return parsed.host;
   } catch {
     return url;
@@ -54,7 +55,7 @@ export const Friends: React.FC = () => {
             {friends.map((friend) => (
               <a
                 key={friend.id}
-                href={friend.url}
+                href={toExternalUrl(friend.url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="interactive group flex min-w-0 gap-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-primary)]"

@@ -4,7 +4,7 @@ export const friends: Friend[] = [
   {
     id: 'example',
     name: '捕手小芳',
-    url: 'blog.linda1729.com',
+    url: 'https://blog.linda1729.com',
     description: '灵魂捕手小芳，一个集美貌与灵魂于一体的女子~',
   },
 ];

@@ -7,8 +7,9 @@ export interface MarkdownHeading {
 export function generateHeadingId(text: string): string {
   return text.toLowerCase()
     .trim()
+    .replace(/[^\u4e00-\u9fa5a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
-    .replace(/[^\u4e00-\u9fa5a-z0-9-]/g, '') || 'heading';
+    .replace(/-+/g, '-') || 'heading';
 }
 
 export function stripMarkdown(md: string): string {
