@@ -3,8 +3,8 @@ import type { Friend } from '../types';
 export const friends: Friend[] = [
   {
     id: 'example',
-    name: 'Friend Site',
-    url: 'https://example.com',
-    description: '把这里替换成朋友的网站介绍。',
+    name: '捕手小芳',
+    url: 'blog.linda1729.com',
+    description: '灵魂捕手小芳，一个集美貌与灵魂于一体的女子~',
   },
 ];
