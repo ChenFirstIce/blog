@@ -90,8 +90,43 @@
     content: "#### ";
     color: var(--color-primary);
   }
+  .markdown-body h5 {
+    @apply mb-3 mt-6 text-base font-bold;
+    color: var(--color-text);
+  }
+  .markdown-body h5::before {
+    content: "##### ";
+    color: var(--color-primary);
+  }
+  .markdown-body h6 {
+    @apply mb-3 mt-6 text-sm font-bold uppercase;
+    color: var(--color-text);
+  }
+  .markdown-body h6::before {
+    content: "###### ";
+    color: var(--color-primary);
+  }
   .markdown-body p {
     @apply mb-6 text-lg leading-relaxed;
+  }
+  .markdown-body a {
+    @apply font-bold underline underline-offset-4 transition-colors;
+    color: var(--color-primary);
+    text-decoration-thickness: 1px;
+  }
+  .markdown-body a:hover {
+    color: var(--color-text);
+  }
+  .markdown-body strong {
+    @apply font-black;
+    color: var(--color-text);
+  }
+  .markdown-body em {
+    color: var(--color-text);
+  }
+  .markdown-body del {
+    color: var(--color-muted);
+    text-decoration-color: var(--color-primary);
   }
   .markdown-body ul {
     @apply list-disc list-outside mb-6 ml-6 space-y-2;
@@ -104,8 +139,24 @@
   .markdown-body li {
     @apply pl-1;
   }
+  .markdown-body li > p {
+    @apply mb-2;
+  }
+  .markdown-body .contains-task-list {
+    @apply ml-0 list-none;
+  }
+  .markdown-body .task-list-item {
+    @apply flex items-start gap-3 pl-0;
+  }
+  .markdown-body .task-list-item input {
+    @apply mt-1 size-4 shrink-0 rounded border;
+    accent-color: var(--color-primary);
+    border-color: var(--color-border);
+  }
   .markdown-body blockquote {
-    @apply relative my-8 rounded-lg bg-[var(--color-accent-soft)] py-5 pl-9 pr-6 italic;
+    @apply relative my-8 rounded-lg border py-5 pl-9 pr-6 italic;
+    background: var(--color-accent-soft);
+    border-color: var(--color-border);
     color: var(--color-muted);
   }
   .markdown-body blockquote::before {
@@ -116,28 +167,39 @@
     position: absolute;
     top: 1.25rem;
   }
+  .markdown-body blockquote p:last-child {
+    @apply mb-0;
+  }
   .markdown-body code:not(pre code) {
     @apply bg-[var(--color-accent-soft)] px-1.5 py-0.5 rounded-md text-sm font-mono text-[var(--color-primary)] font-medium;
   }
   .markdown-body pre {
-    @apply p-6 rounded-lg overflow-x-auto my-8 text-sm font-mono;
+    @apply border p-6 rounded-lg overflow-x-auto my-8 text-sm font-mono;
     background: var(--color-code);
+    border-color: var(--color-border);
     color: var(--color-code-text);
   }
   .markdown-body pre code {
-    @apply bg-transparent p-0 text-inherit font-mono leading-relaxed;
+    @apply block bg-transparent p-0 text-inherit font-mono leading-relaxed;
+    min-width: max-content;
   }
-  .markdown-body img {
-    @apply rounded-3xl my-10 shadow-lg mx-auto max-w-full;
+  .markdown-body pre .hljs {
+    @apply bg-transparent p-0;
+    color: inherit;
   }
   .markdown-body hr {
-    @apply my-12 border-gray-100;
+    @apply my-12 border-0 border-t;
+    border-color: var(--color-border);
+  }
+  .markdown-table-wrap {
+    @apply my-8 overflow-x-auto rounded-lg border;
+    border-color: var(--color-border);
   }
   .markdown-body table {
-    @apply w-full border-collapse m-0;
+    @apply m-0 w-full min-w-full border-collapse;
   }
   .markdown-body th {
-    @apply px-6 py-4 text-left text-xs font-black uppercase tracking-widest border-b;
+    @apply border-b px-6 py-4 text-left text-xs font-black uppercase;
     background: var(--color-surface);
     border-color: var(--color-border);
     color: var(--color-text);
@@ -157,8 +219,50 @@
     @apply bg-[var(--color-accent-soft)];
     color: var(--color-text);
   }
-  .markdown-body img {
-    @apply m-0;
+  .markdown-image {
+    @apply my-10 block text-center;
+  }
+  .markdown-image img {
+    @apply mx-auto max-w-full rounded-lg border transition-transform duration-300 hover:scale-[1.01];
+    border-color: var(--color-border);
+  }
+  .markdown-image-caption {
+    @apply mt-3 block font-mono text-xs;
+    color: var(--color-muted);
+  }
+  .markdown-heading-anchor {
+    @apply ml-3 no-underline opacity-0 transition-opacity;
+    color: var(--color-primary);
+  }
+  .markdown-body :is(h1, h2, h3, h4, h5, h6):hover .markdown-heading-anchor,
+  .markdown-heading-anchor:focus {
+    @apply opacity-100;
+  }
+  .markdown-body .katex-display {
+    @apply my-8 overflow-x-auto overflow-y-hidden rounded-lg border px-4 py-5;
+    background: var(--color-surface);
+    border-color: var(--color-border);
+  }
+  .markdown-body .katex {
+    color: var(--color-text);
+  }
+  .markdown-body .footnotes {
+    @apply mt-12 border-t pt-6 text-sm;
+    border-color: var(--color-border);
+  }
+  .markdown-body .footnotes h2 {
+    @apply mt-0 text-lg;
+  }
+  .markdown-body .footnotes ol {
+    @apply mb-0 text-sm;
+  }
+  .markdown-body .footnotes li {
+    @apply pl-2;
+  }
+  .markdown-body [data-footnote-ref],
+  .markdown-body [data-footnote-backref] {
+    @apply font-mono text-xs no-underline;
+    color: var(--color-primary);
   }
 }
 

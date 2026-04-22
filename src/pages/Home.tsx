@@ -125,14 +125,16 @@ const EducationTimeline = () => (
                     ))}
                   </div>
                 </div>
-                <div>
-                  <p className="mb-3 font-mono text-xs font-bold uppercase text-[var(--color-muted)]">core courses</p>
-                  <div className="flex flex-wrap gap-2">
-                    {item.courses.map((course) => (
-                      <span key={course} className="terminal-chip">{course}</span>
-                    ))}
+                {item.courses && item.courses.length > 0 && (
+                  <div>
+                    <p className="mb-3 font-mono text-xs font-bold uppercase text-[var(--color-muted)]">core courses</p>
+                    <div className="flex flex-wrap gap-2">
+                      {item.courses.map((course) => (
+                        <span key={course} className="terminal-chip">{course}</span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </article>

@@ -23,7 +23,6 @@ export const education: Education[] = [
     major: '软件工程',
     period: '2023 - 2027',
     interests: ['ACG', 'Knowledge Management'],
-    //courses: [''],
     summary:
       '初步摸索学习方式和生活方式的未成年成年人',
   },

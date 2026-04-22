@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github.css';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { getPostBySlug } from '../lib/posts';
 import { extractMarkdownHeadings } from '../lib/headings';
+import { MarkdownRenderer } from '../components/MarkdownRenderer';
 
 const PanelHeader: React.FC<{ title: string; meta?: string }> = ({ title, meta }) => (
   <div className="terminal-panel-title flex items-center justify-between px-4 py-3 font-mono text-xs">
@@ -27,50 +25,8 @@ export const PostDetail: React.FC = () => {
     return extractMarkdownHeadings(content);
   }, [post?.body]);
 
-  const MarkdownComponents = {
-    h1: ({ children }: any) => <h1 className="scroll-mt-24">{children}</h1>,
-    h2: ({ children }: any) => <h2 className="scroll-mt-24">{children}</h2>,
-    h3: ({ children }: any) => <h3 className="scroll-mt-24">{children}</h3>,
-    h4: ({ children }: any) => <h4 className="scroll-mt-24">{children}</h4>,
-    h5: ({ children }: any) => <h5 className="scroll-mt-24">{children}</h5>,
-    h6: ({ children }: any) => <h6 className="scroll-mt-24">{children}</h6>,
-    table: ({ children }: any) => (
-      <div className="my-8 overflow-x-auto rounded-lg border border-[var(--color-border)]">
-        <table className="m-0 min-w-full divide-y divide-[var(--color-border)]">
-          {children}
-        </table>
-      </div>
-    ),
-    img: ({ src, alt, ...props }: any) => (
-      <span className="my-10 block text-center">
-        <img
-          src={src}
-          alt={alt}
-          className="mx-auto max-w-full rounded-lg border border-[var(--color-border)] transition-transform duration-300 hover:scale-[1.01]"
-          referrerPolicy="no-referrer"
-          {...props}
-        />
-        {alt && <span className="mt-3 block font-mono text-xs text-[var(--color-muted)]">{alt}</span>}
-      </span>
-    ),
-  };
-
-  useEffect(() => {
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>('.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6'));
-    headings.forEach((heading, index) => {
-      const node = nodes[index];
-      if (node) node.id = heading.id;
-    });
-  }, [headings]);
-
   useEffect(() => {
     if (headings.length === 0) return;
-
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>('.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6'));
-    headings.forEach((heading, index) => {
-      const node = nodes[index];
-      if (node) node.id = heading.id;
-    });
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -147,13 +103,7 @@ export const PostDetail: React.FC = () => {
 
           <div className="p-5 sm:p-8">
             <div className="markdown-body prose max-w-none">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeHighlight]}
-                components={MarkdownComponents}
-              >
-                {post.body}
-              </ReactMarkdown>
+              <MarkdownRenderer>{post.body}</MarkdownRenderer>
             </div>
             {post.pdf && (
               <section className="mt-10 space-y-4">
