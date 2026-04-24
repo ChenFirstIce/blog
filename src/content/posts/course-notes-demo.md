@@ -1,9 +1,9 @@
 ---
-title: "课程笔记示例：Markdown 到思维导图"
-date: "2026-04-18"
-category: "学习笔记"
-tags: ["Course", "Markdown", "Notes"]
-excerpt: "展示一篇学习笔记如何同时以文章和思维导图方式查看。"
+title: "从0开始的码字生活"
+date: "2026-04-22"
+category: "开端"
+tags: ["在想什么？"]
+excerpt: "为何开始"
 pdf: "/pdf/course-demo.pdf"
 draft: false
 ---

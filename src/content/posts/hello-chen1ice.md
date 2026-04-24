@@ -1,10 +1,10 @@
 ---
-title: "欢迎来到 Chen1Ice 的博客"
-date: "2026-04-19"
-category: "随笔"
+title: 欢迎来到 Chen1Ice 的博客
+date: 2026-04-19
+category: 随笔
 tags: ["Blog", "Life"]
-excerpt: "这是本地 Markdown 博客的第一篇示例文章。"
-draft: false
+excerpt: 这是本地 Markdown 博客的第一篇示例文章。
+draft: true
 ---
 
 # 欢迎来到 Chen1Ice 的博客
