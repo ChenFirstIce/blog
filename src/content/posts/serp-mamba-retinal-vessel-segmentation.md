@@ -20,9 +20,9 @@ draft: false
 # 论文笔记
 ### 论文速读
 - **不懂的词**：
-	- 血管<mark style="background: #BBFABBA6;">拓扑一致性</mark>的先验知识[21]
-	- 保证分段血管得到<mark style="background: #BBFABBA6;">有效关注并保持相干性</mark>
-	- 指标<mark style="background: #BBFABBA6;"> Dice、IoU 和 MCC</mark>的含义都是什么，如何进行计算的？
+	- 血管拓扑一致性的先验知识[21]
+	- 保证分段血管得到有效关注并保持相干性
+	- 指标 Dice、IoU 和 MCC 的含义都是什么，如何进行计算的？
 - **Abstract**
 	- **任务**：高分辨率血管分割
 	- **数据集**：UWF-SLO
@@ -35,7 +35,7 @@ draft: false
 			1. 高分辨率加剧目标和背景的类别不平衡
 			2. 眼睑和睫毛覆盖了血管
 			3. 不均匀的照明和对比度
-	- **SSM**：<mark style="background: #BBFABBA6;">长程依赖关系建模</mark>（<mark style="background: #BBFABBA6;">复杂度</mark>：线性级别）
+	- **SSM**：长程依赖关系建模（复杂度：线性级别）
 		- 但是无法适应血管的弯曲和变化，无法维持血管的连续性
 	- **创新点**：
 		- **创新点1**（SIA）：改变Mamba块的扫描路径——蛇形扫描路径
@@ -74,7 +74,7 @@ draft: false
 			- **M2**：在 **U-Mamba** 基础上添加 **ADDR** 模块。
 	        - **Ours**：结合 **SIA** 和 **ADDR** 的 **Serp-Mamba** 模型。
 	- **实验结果**：
-	    - **SIA** 提高了<mark style="background: #BBFABBA6;"> Dice、IoU 和 MCC</mark>，证明蛇形扫描有效增强了血管的提取。
+	    - **SIA** 提高了 Dice、IoU 和 MCC，证明蛇形扫描有效增强了血管的提取。
 	    - **ADDR** 模块有效处理了类别不平衡问题，并且改善了模糊区域的分类，提高了模型的鲁棒性。
 	    - 最终的 **Serp-Mamba** 模型，结合了 **SIA** 和 **ADDR**，达到了最佳性能。
 	- **结论**：
@@ -105,7 +105,7 @@ draft: false
 			- 推理速度慢
 		- **表示**：
 			- 对于一个序列，长度为 $N$ , 维度为 $d$，复杂度为 $O(N^2d)$![serp-mamba-20260424202056](/images/serp-mamba-20260424202056.png)
-				- 对于第$i$行，要和 $N$ 列<mark class="hltr-red">相乘再相加</mark>
+				- 对于第$i$行，要和 $N$ 列相乘再相加
 				- 单个维度，矩阵点乘的数量： $N*N$
 				- 因为维度是 $d$ 维度，矩阵点乘法的数量是： $N*N*d$
 	- **RNN**：
@@ -114,11 +114,11 @@ draft: false
 			- 当前输出来当前状态：$y_t=f(h_t)$
 		- **优点**：推理很快
 		- **缺点**：
-			- 会遗忘，无法建模<mark class="hltr-pink">长距离依赖关系</mark>
+			- 会遗忘，无法建模长距离依赖关系
 			- 只能串行计算，训练慢
 	- **Mamba**：
 		- **状态方程**：$h'(t)=Ah(t)+Bx(t)$
-			- 当前状态的<mark class="hltr-red">变化率</mark>来自前一个状态+当前输入
+			- 当前状态的变化率来自前一个状态+当前输入
 		- **输出方程**：$y(t)=Ch(t)$
 			- $y(t)=Ch(t)+Dx(t)$ 这里的第一条路径被忽略![serp-mamba-20260424203131](/images/serp-mamba-20260424203131.png)
 	- **S4**：基于SSM改进
