@@ -1,7 +1,9 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { MarkdownRenderer } from '../MarkdownRenderer';
 import { extractMarkdownHeadings } from '../../lib/headings';
+import { parseMarkdownPost } from '../../lib/postsCore';
 
 const renderMarkdown = (markdown: string) => renderToStaticMarkup(<MarkdownRenderer>{markdown}</MarkdownRenderer>);
 
@@ -21,6 +23,13 @@ A note.[^one]
     expect(html).toContain('katex');
     expect(html).toContain('Footnote body');
     expect(html).toContain('data-footnote-backref');
+  });
+
+  it('does not abort article rendering when a math fragment is invalid', () => {
+    const html = renderMarkdown('Before $\\unknowncommand{x}$ after.');
+
+    expect(html).toContain('Before');
+    expect(html).toContain('after');
   });
 
   it('uses the same heading ids as the table of contents extractor', () => {
@@ -63,5 +72,16 @@ A note.[^one]
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
     expect(html).toContain('href="/blog"');
+  });
+
+  it('renders the Serp-Mamba post without raw mark tags or broken image markup', () => {
+    const raw = readFileSync('src/content/posts/serp-mamba-retinal-vessel-segmentation.md', 'utf8');
+    const post = parseMarkdownPost('../content/posts/serp-mamba-retinal-vessel-segmentation.md', raw);
+    const html = renderMarkdown(post.body);
+
+    expect(html).toContain('Serp-Mamba');
+    expect(html).not.toContain('<mark');
+    expect(html).not.toContain('&lt;mark');
+    expect(html.match(/<img /g)).toHaveLength(6);
   });
 });

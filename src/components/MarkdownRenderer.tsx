@@ -121,7 +121,7 @@ export const MarkdownRenderer: React.FC<{ children: string }> = ({ children }) =
     rehypePlugins={[
       rehypeRaw,
       [rehypeSanitize, markdownSanitizeSchema],
-      rehypeKatex,
+      [rehypeKatex, { throwOnError: false, strict: false }],
       rehypeHighlight,
       rehypeTerminalHeadings,
     ]}
