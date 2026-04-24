@@ -2,7 +2,7 @@
 title: "算法笔记：滑动窗口"
 date: "2026-04-24"
 category: "算法"
-tags: ["Algorithm", "Sliding Window", "LeetCode"]
+tags: ["Algorithm", "Sliding-Window", "LeetCode"]
 excerpt: "整理滑动窗口题型，包括无重复字符最长子串等例题与题解。"
 draft: false
 ---
@@ -209,4 +209,3 @@ public:
     }
 };
 ```
-
