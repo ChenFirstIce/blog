@@ -5,12 +5,34 @@ import remarkMath from 'remark-math';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeKatex from 'rehype-katex';
 import rehypeRaw from 'rehype-raw';
-import rehypeSanitize from 'rehype-sanitize';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import type { Components } from 'react-markdown';
 import { getUniqueHeadingId } from '../lib/headings';
 import 'katex/dist/katex.min.css';
 
 const isExternalHref = (href: string) => /^(https?:)?\/\//i.test(href);
+const obsidianHighlightClasses = [
+  'hltr-red',
+  'hltr-orange',
+  'hltr-yellow',
+  'hltr-green',
+  'hltr-blue',
+  'hltr-purple',
+  'hltr-pink',
+];
+
+const markdownSanitizeSchema = {
+  ...defaultSchema,
+  tagNames: [...(defaultSchema.tagNames ?? []), 'mark'],
+  attributes: {
+    ...defaultSchema.attributes,
+    mark: [
+      ...(defaultSchema.attributes?.mark ?? []),
+      'style',
+      ['className', ...obsidianHighlightClasses],
+    ],
+  },
+};
 
 const getNodeText = (node: any): string => {
   if (!node) return '';
@@ -98,7 +120,7 @@ export const MarkdownRenderer: React.FC<{ children: string }> = ({ children }) =
     remarkPlugins={[remarkGfm, remarkMath]}
     rehypePlugins={[
       rehypeRaw,
-      rehypeSanitize,
+      [rehypeSanitize, markdownSanitizeSchema],
       rehypeKatex,
       rehypeHighlight,
       rehypeTerminalHeadings,

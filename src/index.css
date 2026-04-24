@@ -128,6 +128,32 @@
     color: var(--color-muted);
     text-decoration-color: var(--color-primary);
   }
+  .markdown-body mark {
+    @apply rounded px-1 py-0.5;
+    background: #fff3a3;
+    color: var(--color-text);
+  }
+  .markdown-body mark.hltr-red {
+    background: #ffb8c8;
+  }
+  .markdown-body mark.hltr-orange {
+    background: #ffd2a6;
+  }
+  .markdown-body mark.hltr-yellow {
+    background: #fff3a3;
+  }
+  .markdown-body mark.hltr-green {
+    background: #bbfabb;
+  }
+  .markdown-body mark.hltr-blue {
+    background: #adccff;
+  }
+  .markdown-body mark.hltr-purple {
+    background: #d7c4ff;
+  }
+  .markdown-body mark.hltr-pink {
+    background: #ffb8e6;
+  }
   .markdown-body ul {
     @apply list-disc list-outside mb-6 ml-6 space-y-2;
     color: var(--color-muted);

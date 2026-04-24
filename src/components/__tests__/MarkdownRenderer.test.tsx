@@ -47,6 +47,15 @@ A note.[^one]
     expect(html).not.toContain('data-label');
   });
 
+  it('preserves Obsidian mark highlights', () => {
+    const html = renderMarkdown(
+      '<mark style="background: #BBFABBA6;">Styled</mark> and <mark class="hltr-red">Classed</mark>',
+    );
+
+    expect(html).toContain('<mark style="background:#BBFABBA6">Styled</mark>');
+    expect(html).toContain('<mark class="hltr-red">Classed</mark>');
+  });
+
   it('marks external links safe and leaves local links in the app', () => {
     const html = renderMarkdown('[External](https://example.com) and [Local](/blog)');
 
