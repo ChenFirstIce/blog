@@ -122,7 +122,7 @@ export const PostDetail: React.FC = () => {
               <nav className="max-h-[calc(100vh-180px)] overflow-y-auto p-4">
                 <ul className="space-y-1 font-mono text-sm">
                   {headings
-                    .filter((heading) => heading.level >= 2 && heading.level <= 3)
+                    .filter((heading) => heading.level >= 1 && heading.level <= 3)
                     .map((heading, index) => (
                       <li key={`${heading.id}-${index}`}>
                         <a
@@ -132,9 +132,9 @@ export const PostDetail: React.FC = () => {
                           }}
                           className={`block rounded-md py-1.5 transition-colors hover:text-[var(--color-text)] ${
                             activeId === heading.id ? 'text-[var(--color-primary)]' : 'text-[var(--color-muted)]'
-                          } ${heading.level === 3 ? 'pl-4 text-xs' : ''}`}
+                          } ${heading.level === 1 ? 'font-bold' : ''} ${heading.level === 2 ? 'pl-3 text-xs' : ''} ${heading.level === 3 ? 'pl-6 text-xs' : ''}`}
                         >
-                          {heading.level === 2 ? '##' : '###'} {heading.text}
+                          {heading.text}
                         </a>
                       </li>
                     ))}

@@ -25,4 +25,15 @@ describe('PostDetail', () => {
     expect(html).toContain('<pre>');
     expect(html).toContain('findDuplicates');
   });
+
+  it('includes h1, h2, and h3 headings in the table of contents', () => {
+    const html = renderPostDetail('/blog/algorithm-hash');
+
+    expect(html).toContain('href="#算法笔记哈希"');
+    expect(html).toContain('算法笔记：哈希');
+    expect(html).toContain('href="#板子"');
+    expect(html).toContain('板子');
+    expect(html).toContain('href="#1-寻找重复元素"');
+    expect(html).toContain('1. 寻找重复元素');
+  });
 });
