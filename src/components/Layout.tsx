@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, Moon, Sun, Terminal, X } from 'lucide-react';
 import { navigation, siteProfile, socialLinks } from '../content/site';
-import { setupRevealOnScroll } from '../lib/reveal';
+import { resetScrollToTop, setupRevealOnScroll } from '../lib/reveal';
 
 type Theme = 'light' | 'dark';
 
@@ -24,6 +24,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   }, [theme]);
 
   useEffect(() => {
+    resetScrollToTop();
     setupRevealOnScroll();
     setIsMenuOpen(false);
   }, [location.pathname]);

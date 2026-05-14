@@ -1,3 +1,9 @@
+export function resetScrollToTop() {
+  if (typeof window === 'undefined') return;
+
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+}
+
 export function setupRevealOnScroll() {
   if (typeof window === 'undefined') return;
 
@@ -18,8 +24,18 @@ export function setupRevealOnScroll() {
         }
       });
     },
-    { threshold: 0.12 },
+    { threshold: 0 },
   );
 
-  elements.forEach((element) => observer.observe(element));
+  elements.forEach((element) => {
+    const rect = element.getBoundingClientRect();
+    const isInOrAboveViewport = rect.top < window.innerHeight && rect.bottom > 0;
+
+    if (rect.bottom < 0 || isInOrAboveViewport) {
+      element.classList.add('is-visible');
+      return;
+    }
+
+    observer.observe(element);
+  });
 }

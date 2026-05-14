@@ -61,50 +61,26 @@
     @apply text-4xl font-bold mb-8 mt-12 tracking-tight;
     color: var(--color-text);
   }
-  .markdown-body h1::before {
-    content: "# ";
-    color: var(--color-primary);
-  }
   .markdown-body h2 {
     @apply text-2xl font-bold mb-6 mt-10 tracking-tight border-b pb-2;
     border-color: var(--color-border);
     color: var(--color-text);
   }
-  .markdown-body h2::before {
-    content: "## ";
-    color: var(--color-primary);
-  }
   .markdown-body h3 {
     @apply text-xl font-bold mb-4 mt-8;
     color: var(--color-text);
-  }
-  .markdown-body h3::before {
-    content: "### ";
-    color: var(--color-primary);
   }
   .markdown-body h4 {
     @apply text-lg font-bold mb-3 mt-6;
     color: var(--color-text);
   }
-  .markdown-body h4::before {
-    content: "#### ";
-    color: var(--color-primary);
-  }
   .markdown-body h5 {
     @apply mb-3 mt-6 text-base font-bold;
     color: var(--color-text);
   }
-  .markdown-body h5::before {
-    content: "##### ";
-    color: var(--color-primary);
-  }
   .markdown-body h6 {
     @apply mb-3 mt-6 text-sm font-bold uppercase;
     color: var(--color-text);
-  }
-  .markdown-body h6::before {
-    content: "###### ";
-    color: var(--color-primary);
   }
   .markdown-body p {
     @apply mb-6 text-lg leading-relaxed;

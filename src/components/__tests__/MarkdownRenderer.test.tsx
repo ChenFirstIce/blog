@@ -84,4 +84,32 @@ A note.[^one]
     expect(html).not.toContain('&lt;mark');
     expect(html.match(/<img /g)).toHaveLength(6);
   });
+
+  it('renders the full Markdown syntax fixture', () => {
+    const raw = readFileSync('src/content/posts/markdown-syntax-fixture.md', 'utf8');
+    const post = parseMarkdownPost('../content/posts/markdown-syntax-fixture.md', raw);
+    const html = renderMarkdown(post.body);
+
+    expect(post.draft).toBe(true);
+    expect(post.title).toBe('Markdown Syntax Fixture');
+    expect(html).toContain('<h1');
+    expect(html).toContain('<p>');
+    expect(html).toContain('<strong>粗体</strong>');
+    expect(html).toContain('<em>斜体</em>');
+    expect(html).toContain('<del>删除线</del>');
+    expect(html).toContain('<code>inline code</code>');
+    expect(html).toContain('<pre>');
+    expect(html).toContain('<blockquote>');
+    expect(html).toContain('<ul');
+    expect(html).toContain('<ol');
+    expect(html).toContain('nested unordered item');
+    expect(html).toContain('nested ordered item');
+    expect(html).toContain('type="checkbox"');
+    expect(html).toContain('<a href="/blog"');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('<img src="/logo.svg" alt="Sample image"');
+    expect(html).toContain('<table>');
+    expect(html).toContain('<td>支持</td>');
+    expect(html).toContain('中文文本');
+  });
 });

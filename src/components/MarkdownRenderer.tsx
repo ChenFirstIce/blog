@@ -57,13 +57,9 @@ const rehypeTerminalHeadings = () => (tree: any) => {
             href: `#${id}`,
             className: ['markdown-heading-anchor'],
             ariaLabel: 'Link to heading',
+            title: 'Link to heading',
           },
-          children: [{
-            type: 'element',
-            tagName: 'span',
-            properties: { ariaHidden: 'true' },
-            children: [{ type: 'text', value: '#' }],
-          }],
+          children: [],
         },
       ];
     }

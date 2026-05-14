@@ -18,12 +18,13 @@ export const PostDetail: React.FC = () => {
   const post = getPostBySlug(slug);
   const [activeId, setActiveId] = useState<string>('');
   const [tocOpen, setTocOpen] = useState(true);
+  const articleMarkdown = useMemo(() => `# ${post?.title ?? ''}\n\n${post?.body ?? ''}`.trim(), [post?.body, post?.title]);
 
   const headings = useMemo(() => {
-    const content = post?.body;
+    const content = articleMarkdown;
     if (!content) return [];
     return extractMarkdownHeadings(content);
-  }, [post?.body]);
+  }, [articleMarkdown]);
 
   useEffect(() => {
     if (headings.length === 0) return;
@@ -70,40 +71,33 @@ export const PostDetail: React.FC = () => {
   }
 
   return (
-    <article className="mx-auto max-w-6xl space-y-7">
+    <article className="mx-auto max-w-6xl space-y-5">
       <div className="reveal flex items-center justify-between">
         <Link to="/blog" className="interactive inline-flex items-center gap-2 rounded-lg border border-[var(--color-border)] px-3 py-2 font-mono text-sm font-bold text-[var(--color-muted)] hover:text-[var(--color-text)]">
           <ArrowLeft size={16} /> cd ../blog
         </Link>
       </div>
 
-      <header className="reveal terminal-panel overflow-hidden">
-        <PanelHeader title={`posts/${post.slug}.md`} meta={post.date} />
-        <div className="space-y-5 p-5 sm:p-7">
-          <div className="flex flex-wrap items-center gap-3 font-mono text-xs text-[var(--color-muted)]">
-            <Link to={`/blog/category/${post.categorySlug}`} className="text-[var(--color-primary)] hover:underline">
-              {post.category}
-            </Link>
-            {post.tags.map((tag) => (
-              <Link key={tag.slug} to={`/blog/tag/${tag.slug}`} className="terminal-chip">
-                #{tag.label}
-              </Link>
-            ))}
-          </div>
-          <h1 className="text-4xl font-black leading-tight tracking-tight text-[var(--color-text)] md:text-5xl">
-            # {post.title}
-          </h1>
-          <p className="max-w-3xl text-base leading-7 text-[var(--color-muted)]">{post.excerpt}</p>
-        </div>
-      </header>
-
       <div className="reveal grid gap-7 xl:grid-cols-[1fr_18rem]">
         <main className="terminal-panel min-w-0 overflow-hidden">
-          <PanelHeader title="rendered article" />
+          <PanelHeader title={`posts/${post.slug}.md`} meta={post.date} />
+
+          <header className="border-b border-[var(--color-border)] p-4 sm:p-5">
+            <div className="flex flex-wrap items-center gap-3 font-mono text-xs text-[var(--color-muted)]">
+              <Link to={`/blog/category/${post.categorySlug}`} className="text-[var(--color-primary)] hover:underline">
+                {post.category}
+              </Link>
+              {post.tags.map((tag) => (
+                <Link key={tag.slug} to={`/blog/tag/${tag.slug}`} className="terminal-chip">
+                  #{tag.label}
+                </Link>
+              ))}
+            </div>
+          </header>
 
           <div className="p-5 sm:p-8">
             <div className="markdown-body prose max-w-none">
-              <MarkdownRenderer>{post.body}</MarkdownRenderer>
+              <MarkdownRenderer>{articleMarkdown}</MarkdownRenderer>
             </div>
             {post.pdf && (
               <section className="mt-10 space-y-4">
