@@ -63,7 +63,7 @@ public:
 		- 选择使用当前数字
 		- 或者不选择使用当前数字
 	- **代码**：
-``` cpp fold
+``` cpp
 class Solution {
 public:
     int maxSubArray(vector<int>& nums) {

@@ -146,7 +146,7 @@ while (fast && fast->next) {
 return false;
 ```
 
---- 
+---
 # 性质
 
 ---
@@ -244,6 +244,7 @@ public:
 
 ### [2. 盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)
 #中等
+
 #### 我的解法
 - 1：没有写出来，只有一些思路，这种越远越好的题不能用对向指针
 	- 我记得好像可以用队列来做？
@@ -273,7 +274,7 @@ public:
 	};
 	```
 
-## [3. 三数之和](https://leetcode.cn/problems/3sum/)
+### [3. 三数之和](https://leetcode.cn/problems/3sum/)
 #中等
 #### 我的解法
 - 1：写出来了，但是超时，题解过311/316
@@ -364,7 +365,7 @@ public:
 	```
 
 
-## [4. 接雨水](https://leetcode.cn/problems/trapping-rain-water/)
+### [4. 接雨水](https://leetcode.cn/problems/trapping-rain-water/)
 #困难
 ### 我的解法
 - 1：限制时间没有写出来，但是有思路
