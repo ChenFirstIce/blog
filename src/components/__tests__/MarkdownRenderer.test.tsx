@@ -74,6 +74,20 @@ A note.[^one]
     expect(html).toContain('href="/blog"');
   });
 
+  it('renders fenced code blocks with the blog code frame chrome and language label', () => {
+    const html = renderMarkdown(`\`\`\`ts
+const message = 'hello';
+\`\`\`
+`);
+
+    expect(html).toContain('markdown-code-frame');
+    expect(html).toContain('markdown-code-toolbar');
+    expect(html).toContain('markdown-code-language');
+    expect(html).toContain('>ts</span>');
+    expect(html).toContain('<pre>');
+    expect(html).toContain('message =');
+  });
+
   it('renders the Serp-Mamba post without raw mark tags or broken image markup', () => {
     const raw = readFileSync('src/content/posts/serp-mamba-retinal-vessel-segmentation.md', 'utf8');
     const post = parseMarkdownPost('../content/posts/serp-mamba-retinal-vessel-segmentation.md', raw);

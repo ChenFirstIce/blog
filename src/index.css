@@ -21,6 +21,9 @@
     --color-lime: #d1fa94;
     --color-code: #2f2a26;
     --color-code-text: #ffffff;
+    --color-code-chrome: rgba(47, 42, 38, 0.92);
+    --color-code-border: rgba(47, 42, 38, 0.18);
+    --color-code-line: rgba(255, 255, 255, 0.09);
   }
 
   html[data-theme='dark'] {
@@ -38,6 +41,9 @@
     --color-lime: #d1fa94;
     --color-code: #25211e;
     --color-code-text: #ffffff;
+    --color-code-chrome: rgba(37, 33, 30, 0.96);
+    --color-code-border: rgba(209, 250, 148, 0.24);
+    --color-code-line: rgba(209, 250, 148, 0.08);
   }
 
   html {
@@ -175,11 +181,50 @@
   .markdown-body code:not(pre code) {
     @apply bg-[var(--color-accent-soft)] px-1.5 py-0.5 rounded-md text-sm font-mono text-[var(--color-primary)] font-medium;
   }
-  .markdown-body pre {
-    @apply border p-6 rounded-lg overflow-x-auto my-8 text-sm font-mono;
+  .markdown-code-frame {
+    @apply my-8 overflow-hidden rounded-lg border;
     background: var(--color-code);
-    border-color: var(--color-border);
+    border-color: var(--color-code-border);
+    box-shadow: 0 18px 45px rgba(47, 42, 38, 0.12);
+  }
+  html[data-theme='dark'] .markdown-code-frame {
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+  }
+  .markdown-code-toolbar {
+    @apply flex min-h-11 items-center justify-between gap-4 border-b px-4 font-mono text-xs;
+    background: var(--color-code-chrome);
+    border-color: var(--color-code-border);
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .markdown-code-controls {
+    @apply flex items-center gap-2;
+  }
+  .markdown-code-controls span {
+    @apply block size-2.5 rounded-full;
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .markdown-code-controls span:nth-child(1) {
+    background: #ff7b72;
+  }
+  .markdown-code-controls span:nth-child(2) {
+    background: #f2cc60;
+  }
+  .markdown-code-controls span:nth-child(3) {
+    background: var(--color-accent);
+  }
+  .markdown-code-language {
+    @apply rounded border px-2 py-1 text-[0.6875rem] font-bold uppercase tracking-normal;
+    background: rgba(209, 250, 148, 0.12);
+    border-color: rgba(209, 250, 148, 0.28);
+    color: var(--color-accent);
+  }
+  .markdown-body pre {
+    @apply m-0 overflow-x-auto p-5 text-sm font-mono sm:p-6;
+    background: var(--color-code);
     color: var(--color-code-text);
+    background-image: linear-gradient(var(--color-code-line) 1px, transparent 1px);
+    background-size: 100% 1.75rem;
+    line-height: 1.75;
   }
   .markdown-body pre code {
     @apply block bg-transparent p-0 text-inherit font-mono leading-relaxed;

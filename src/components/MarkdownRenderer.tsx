@@ -41,6 +41,11 @@ const getNodeText = (node: any): string => {
   return node.children.map(getNodeText).join('');
 };
 
+const getCodeLanguage = (className = ''): string => {
+  const languageClass = className.split(/\s+/).find((name) => name.startsWith('language-'));
+  return languageClass?.replace(/^language-/, '') || 'code';
+};
+
 const rehypeTerminalHeadings = () => (tree: any) => {
   const counts = new Map<string, number>();
 
@@ -97,6 +102,29 @@ const MarkdownComponents: Components = {
     <div className="markdown-table-wrap">
       <table>{children}</table>
     </div>
+  ),
+  pre: ({ children, node: _node, ...props }) => {
+    const child = React.isValidElement<{ className?: string }>(children) ? children : undefined;
+    const language = getCodeLanguage(child?.props.className);
+
+    return (
+      <div className="markdown-code-frame">
+        <div className="markdown-code-toolbar" aria-hidden="true">
+          <span className="markdown-code-controls">
+            <span />
+            <span />
+            <span />
+          </span>
+          <span className="markdown-code-language">{language}</span>
+        </div>
+        <pre {...props}>{children}</pre>
+      </div>
+    );
+  },
+  code: ({ children, className, node: _node, ...props }) => (
+    <code className={className} {...props}>
+      {children}
+    </code>
   ),
   img: ({ src, alt, node: _node, ...props }) => (
     <span className="markdown-image">
